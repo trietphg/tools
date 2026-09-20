@@ -3,156 +3,302 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrietPhg Tools - Công Cụ Tài Chính & Thẩm Định Tiết Kiệm</title>
-
-  <!-- Tailwind CSS CDN -->
+  <title>TrietPhg Tools - Thẩm Định Hoán Đổi Sổ Tiết Kiệm</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Flatpickr (Lịch chọn ngày dd/mm/yyyy chuẩn tiếng Việt) -->
+  <!-- Flatpickr (dd/mm/yyyy) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
-
-  <!-- Chart.js CDN -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Font Awesome Icons -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { font-family: 'Inter', sans-serif; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
-    .tab-btn-active {
-      background-color: #4f46e5;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
 
-  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-sm">
+  <!-- Header -->
+  <header class="bg-slate-900 text-white shadow-sm border-b border-slate-800 sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-lg font-bold shadow-md shadow-indigo-600/30">
-          <i class="fa-solid fa-calculator"></i>
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-lg font-bold shadow">
+          <i class="fa-solid fa-scale-balanced"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-bold text-base tracking-tight">TrietPhg</span>
-            <span class="text-[11px] bg-indigo-500/20 text-indigo-300 font-semibold px-2 py-0.5 rounded border border-indigo-500/30">/tools</span>
+            <span class="font-black text-lg tracking-tight">TrietPhg</span>
+            <span class="text-xs bg-indigo-900 text-indigo-300 px-2 py-0.5 rounded font-mono border border-indigo-700">/tools</span>
           </div>
-          <p class="text-xs text-slate-400">Bộ công cụ tính lãi suất & thẩm định chuyển sổ tiết kiệm</p>
+          <p class="text-xs text-slate-400">Công cụ tính lãi & Thẩm định chi phí cơ hội chuyển sổ tiết kiệm</p>
         </div>
       </div>
-      <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 font-medium hidden sm:flex items-center gap-2">
-        <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
-        <span>Quy chuẩn 365 ngày (TT 14/2017/TT-NHNN)</span>
+      <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 text-slate-300 font-medium">
+        Quy chuẩn TT 14/2017/TT-NHNN (365 ngày)
       </div>
     </div>
   </header>
 
+  <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
-    <!-- Tab Navigation -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
-      <div>
-        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Công Cụ Tính Lãi & Thẩm Định Quyết Định</h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Nhập ngày tự do (dd/mm/yyyy), hỗ trợ lãi suất dấu phẩy (8,4%) và kiểm định thiệt hại rút non.</p>
-      </div>
-
-      <div class="inline-flex p-1 bg-slate-200 rounded-xl space-x-1 border border-slate-300 self-start sm:self-auto">
-        <button id="btn-tab-single" onclick="switchTab('single')" class="tab-btn-active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center gap-2">
-          <i class="fa-solid fa-coins"></i>
-          <span>Tính Lãi Suất Tiết Kiệm</span>
-        </button>
-        <button id="btn-tab-compare" onclick="switchTab('compare')" class="text-slate-600 hover:text-slate-900 px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center gap-2">
-          <i class="fa-solid fa-scale-balanced"></i>
-          <span>Thẩm Định Rút Non Chuyển Sổ</span>
-        </button>
-      </div>
+    <!-- Tabs Switcher -->
+    <div class="flex border-b border-slate-200 mb-6 space-x-3">
+      <button id="tab-btn-compare" onclick="switchTab('compare')" class="py-3 px-5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-scale-balanced"></i>
+        <span>Thẩm Định Hoán Đổi Sổ Tiết Kiệm (Trade-Off Matrix)</span>
+      </button>
+      <button id="tab-btn-single" onclick="switchTab('single')" class="py-3 px-5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-coins"></i>
+        <span>Tính Lãi Tiết Kiệm Đơn Lẻ</span>
+      </button>
     </div>
 
-    <section id="tab-single" class="block">
+    <!-- TAB: THẨM ĐỊNH HOÁN ĐỔI DANH MỤC (TAB CHÍNH) -->
+    <section id="tab-compare" class="block space-y-6">
+      <!-- Nguyên lý giải thích chuẩn chi phí cơ hội -->
+      <div class="bg-indigo-50/80 border border-indigo-200 p-4 rounded-2xl text-xs text-indigo-950 flex items-start gap-3">
+        <i class="fa-solid fa-circle-info text-indigo-600 text-base mt-0.5"></i>
+        <div class="leading-relaxed">
+          <span class="font-bold">Mô hình cân đối chi phí cơ hội (Opportunity Cost & Trade-off):</span>
+          <br>• <b>Cái được thêm ($\Delta_{\text{Thặng dư}}$)</b>: Phần tiền lãi dôi dư mà Gói B mang lại thêm so với Gói A trong suốt kỳ hạn mới nhờ mức chênh lệch lãi suất.
+          <br>• <b>Cái giá phải trả ($\text{Chi phí chìm } d \text{ ngày}$)</b>: Số tiền lãi tích lũy của Gói A đáng lẽ được hưởng nhưng bị xóa sạch về 0 do rút non.
+          <br>• <b>Điều kiện chuyển gói có lợi</b>: $\Delta_{\text{Net}} = \Delta_{\text{Thặng dư}} - \text{Chi phí chìm} > 0$. Nếu ra số âm, phần tăng thêm của lãi suất mới không bù nổi công sức ngâm vốn, <b>tuyệt đối không nên chuyển</b>.
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Form nhập liệu -->
-        <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <span class="w-2.5 h-4 bg-indigo-600 rounded"></span> Thông số khoản tiền gửi
-            </h2>
-            <button onclick="resetSingleForm()" class="text-xs font-semibold text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors">
-              <i class="fa-solid fa-rotate-right"></i> Đặt lại
-            </button>
+        <!-- CỘT 1: GÓI A HIỆN TẠI -->
+        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold">A</span>
+              Sổ Cũ Đang Gửi (Gói A)
+            </h3>
+            <span class="text-[11px] font-semibold text-slate-400">Đang chạy</span>
           </div>
 
-          <div class="space-y-4">
-            <!-- Vốn gốc -->
+          <div class="space-y-3.5">
+            <!-- Tiền gốc P -->
             <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Số tiền gốc (VND)</label>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Số tiền gốc gửi (P)</label>
               <div class="relative">
-                <input type="text" id="single-amount" value="100,000,000" 
-                       oninput="formatCurrencyInput(this); calculateSingle();" 
-                       class="w-full pl-3.5 pr-14 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-base font-bold text-slate-900 outline-none">
-                <span class="absolute right-3.5 top-3 text-xs font-extrabold text-slate-400 bg-slate-200/80 px-1.5 py-0.5 rounded">VNĐ</span>
+                <input type="text" id="cur-amount" value="10,000,000" oninput="formatCurrencyInput(this); calculateOpportunityTradeoff();" class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">VND</span>
               </div>
-              
-              <!-- Nút tăng giảm nhanh vốn -->
-              <div class="space-y-1.5 mt-2.5">
-                <div class="flex flex-wrap items-center gap-1 text-[11px]">
-                  <span class="text-slate-400 font-bold mr-1">Giảm:</span>
-                  <button type="button" onclick="adjustAmountSingle(-100000000)" class="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-md border border-rose-200 font-semibold transition">-100 Tr</button>
-                  <button type="button" onclick="adjustAmountSingle(-50000000)" class="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-md border border-rose-200 font-semibold transition">-50 Tr</button>
-                  <button type="button" onclick="adjustAmountSingle(-20000000)" class="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-md border border-rose-200 font-semibold transition">-20 Tr</button>
-                  <button type="button" onclick="adjustAmountSingle(-10000000)" class="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-md border border-rose-200 font-semibold transition">-10 Tr</button>
-                </div>
-                <div class="flex flex-wrap items-center gap-1 text-[11px]">
-                  <span class="text-slate-400 font-bold mr-1">Tăng:</span>
-                  <button type="button" onclick="adjustAmountSingle(10000000)" class="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200 font-semibold transition">+10 Tr</button>
-                  <button type="button" onclick="adjustAmountSingle(20000000)" class="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200 font-semibold transition">+20 Tr</button>
-                  <button type="button" onclick="adjustAmountSingle(50000000)" class="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200 font-semibold transition">+50 Tr</button>
-                  <button type="button" onclick="adjustAmountSingle(100000000)" class="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200 font-semibold transition">+100 Tr</button>
-                </div>
-                <div class="flex flex-wrap items-center gap-1 text-[11px]">
-                  <span class="text-slate-400 font-bold mr-1">Mốc:</span>
-                  <button type="button" onclick="setAmountSingle(50000000)" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md border border-slate-200 font-medium transition">50 Tr</button>
-                  <button type="button" onclick="setAmountSingle(100000000)" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md border border-slate-200 font-medium transition">100 Tr</button>
-                  <button type="button" onclick="setAmountSingle(500000000)" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md border border-slate-200 font-medium transition">500 Tr</button>
-                  <button type="button" onclick="setAmountSingle(1000000000)" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md border border-slate-200 font-medium transition">1 Tỷ</button>
-                </div>
+              <!-- Nút cộng trừ tiền nhanh -->
+              <div class="flex flex-wrap gap-1 mt-1.5 text-[11px]">
+                <button onclick="modifyAmount('cur-amount', -50000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded text-slate-600 border border-slate-200 font-medium">-50Tr</button>
+                <button onclick="modifyAmount('cur-amount', -10000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded text-slate-600 border border-slate-200 font-medium">-10Tr</button>
+                <button onclick="modifyAmount('cur-amount', 10000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded text-slate-600 border border-slate-200 font-medium">+10Tr</button>
+                <button onclick="modifyAmount('cur-amount', 50000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded text-slate-600 border border-slate-200 font-medium">+50Tr</button>
               </div>
             </div>
 
             <!-- Ngày bắt đầu gửi -->
             <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Ngày bắt đầu gửi <span class="text-slate-400 font-normal lowercase">(gõ tay dd/mm/yyyy hoặc chọn lịch)</span>
-              </label>
-              <div class="relative flex items-center">
-                <input type="text" id="single-start-date" placeholder="dd/mm/yyyy" 
-                       class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-semibold outline-none"
-                       oninput="handleManualDateInput(this, 'single');" 
-                       onblur="validateDateBlur(this, 'single');">
-                <button type="button" onclick="openPicker('single-start-date')" class="absolute right-3 text-slate-400 hover:text-indigo-600 transition-colors p-1" title="Mở lịch chọn ngày">
-                  <i class="fa-regular fa-calendar-days text-base"></i>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Ngày bắt đầu gửi Gói A</label>
+              <div class="relative flex">
+                <input type="text" id="cur-start-date" placeholder="dd/mm/yyyy" oninput="handleManualDateInput(this, curDatePicker, calculateOpportunityTradeoff);" class="w-full pl-3 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 outline-none">
+                <button type="button" onclick="curDatePicker.open()" class="absolute right-2.5 top-2 text-slate-400 hover:text-indigo-600">
+                  <i class="fa-regular fa-calendar text-sm"></i>
                 </button>
               </div>
             </div>
 
-            <!-- Kỳ hạn -->
-            <div class="grid grid-cols-5 gap-2">
-              <div class="col-span-3">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Kỳ hạn gửi</label>
-                <input type="number" id="single-term" value="6" min="1" oninput="calculateSingle();" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center outline-none">
+            <!-- Lãi suất Gói A -->
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất Gói A ($r_A$ - %/năm)</label>
+              <div class="relative">
+                <input type="text" id="cur-rate" value="8,4" oninput="calculateOpportunityTradeoff();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
               </div>
-              <div class="col-span-2">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Đơn vị</label>
-                <select id="single-term-unit" onchange="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-semibold outline-none">
+            </div>
+
+            <!-- Lãi suất không kỳ hạn -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-600">Lãi không kỳ hạn khi rút non</label>
+                <button type="button" onclick="setZeroDemandRate()" class="text-[11px] text-rose-600 font-bold hover:underline">Mất sạch (0%)</button>
+              </div>
+              <div class="relative">
+                <input type="text" id="cur-demand-rate" value="0" oninput="calculateOpportunityTradeoff();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-700 outline-none">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1">Hầu hết ngân hàng mặc định bằng 0% hoặc 0.1%/năm.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CỘT 2: KẾ HOẠCH RÚT SỚM VÀ GÓI B -->
+        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+            <h3 class="font-bold text-indigo-900 text-sm flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">B</span>
+              Rút Non & Gửi Sổ Mới (Gói B)
+            </h3>
+            <span class="text-[11px] font-bold text-indigo-600">Hoán đổi</span>
+          </div>
+
+          <div class="space-y-3.5">
+            <!-- Ngày quyết định rút non -->
+            <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+              <label class="block text-xs font-bold text-indigo-950 mb-1">Ngày quyết định rút non</label>
+              <div class="relative flex">
+                <input type="text" id="withdraw-date" placeholder="dd/mm/yyyy" oninput="handleManualDateInput(this, withdrawDatePicker, calculateOpportunityTradeoff);" class="w-full pl-3 pr-10 py-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-indigo-900 outline-none">
+                <button type="button" onclick="withdrawDatePicker.open()" class="absolute right-2.5 top-2 text-indigo-400 hover:text-indigo-600">
+                  <i class="fa-regular fa-calendar text-sm"></i>
+                </button>
+              </div>
+              <div id="holding-badge" class="mt-2 text-xs font-bold text-indigo-700">
+                Đã giữ vốn: <span id="holding-days-count">0</span> ngày
+              </div>
+            </div>
+
+            <!-- Kỳ hạn chuẩn của Gói B (N ngày) -->
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Kỳ hạn gửi Gói B (N)</label>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="number" id="new-term" value="6" min="1" oninput="calculateOpportunityTradeoff();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold outline-none">
+                <select id="new-term-unit" onchange="calculateOpportunityTradeoff();" class="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
+                  <option value="month" selected>Tháng</option>
+                  <option value="day">Ngày</option>
+                  <option value="year">Năm</option>
+                </select>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-1">
+                Quy đổi chuẩn kỳ hạn: <span id="new-term-days-count" class="font-bold text-slate-600">180 ngày</span>
+              </div>
+            </div>
+
+            <!-- Lãi suất Gói B -->
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất Gói B ($r_B$ - %/năm)</label>
+              <div class="relative">
+                <input type="text" id="new-rate" value="8,86" oninput="calculateOpportunityTradeoff();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-indigo-700 outline-none focus:ring-2 focus:ring-indigo-500">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+              </div>
+              <div class="text-[11px] text-emerald-600 font-bold mt-1" id="rate-diff-indicator">
+                Chênh lệch: +0.46%/năm
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CỘT 3: KẾT QUẢ THẨM ĐỊNH CHI PHÍ CƠ HỘI -->
+        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="border-b border-slate-100 pb-3 mb-4">
+              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-indigo-600"></i>
+                Kết Luận Thẩm Định Ròng
+              </h3>
+            </div>
+
+            <!-- Khối kết luận lớn -->
+            <div id="decision-card" class="p-4 rounded-xl border text-center mb-4 transition-all">
+              <div id="decision-status" class="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
+                --
+              </div>
+              <div id="decision-net-amount" class="text-3xl font-black mb-1">0 ₫</div>
+              <p id="decision-detail-text" class="text-xs font-medium leading-relaxed">--</p>
+            </div>
+
+            <!-- Bảng phân rã 5 bước theo đúng mô hình -->
+            <div class="space-y-2 text-xs">
+              <!-- Bước 1: Chi phí chìm -->
+              <div class="bg-rose-50/70 border border-rose-100 p-2.5 rounded-xl">
+                <div class="flex justify-between font-bold text-rose-900">
+                  <span>1. Lãi Gói A bị mất sạch (<span id="res-d-days">26</span> ngày):</span>
+                  <span id="res-lost-interest" class="font-mono text-rose-600">0 ₫</span>
+                </div>
+                <div class="text-[10px] text-rose-500 mt-0.5">Cái giá phải trả ngay khi rút non để đổi sổ</div>
+              </div>
+
+              <!-- Bước 2: Thặng dư mới -->
+              <div class="bg-emerald-50/70 border border-emerald-100 p-2.5 rounded-xl">
+                <div class="flex justify-between font-bold text-emerald-900">
+                  <span>2. Phần lãi Gói B mang lại thêm:</span>
+                  <span id="res-extra-gain" class="font-mono text-emerald-600">0 ₫</span>
+                </div>
+                <div class="text-[10px] text-emerald-600 mt-0.5">Lãi Gói B (<span id="res-gain-b">0₫</span>) trừ Lãi Gói A chuẩn (<span id="res-gain-a">0₫</span>)</div>
+              </div>
+
+              <!-- Bước 3: So sánh tỷ lệ -->
+              <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl space-y-1 text-[11px]">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Tỷ lệ tăng lãi suất ($\Delta r / r_A$):</span>
+                  <span id="res-ratio-rate" class="font-bold text-slate-800 font-mono">0%</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Tỷ lệ thời gian ngâm vốn ($d / N$):</span>
+                  <span id="res-ratio-time" class="font-bold text-slate-800 font-mono">0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[10px] text-slate-400 italic">
+            * Công thức: ΔNet = (Lãi Gói B - Lãi Gói A) - Lãi mất trắng do rút non sau d ngày.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB: TÍNH LÃI ĐƠN LẺ -->
+    <section id="tab-single" class="hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-indigo-600"></i> Thông số khoản tiền gửi
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Số tiền gốc gửi (VND)</label>
+              <div class="relative">
+                <input type="text" id="single-amount" value="100,000,000" oninput="formatCurrencyInput(this); calculateSingle();" class="w-full pl-3 pr-12 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-base font-bold text-slate-900 outline-none">
+                <span class="absolute right-3 top-2.5 text-xs font-bold text-slate-400">VND</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5 mt-2 text-xs">
+                <button onclick="modifyAmount('single-amount', -50000000)" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">-50 Tr</button>
+                <button onclick="modifyAmount('single-amount', -10000000)" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">-10 Tr</button>
+                <button onclick="modifyAmount('single-amount', 10000000)" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">+10 Tr</button>
+                <button onclick="modifyAmount('single-amount', 50000000)" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">+50 Tr</button>
+                <button onclick="modifyAmount('single-amount', 100000000)" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">+100 Tr</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Ngày bắt đầu gửi (dd/mm/yyyy)</label>
+              <div class="relative flex">
+                <input type="text" id="single-start-date" placeholder="dd/mm/yyyy" oninput="handleManualDateInput(this, singleDatePicker, calculateSingle);" class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
+                <button type="button" onclick="singleDatePicker.open()" class="absolute right-3 top-2.5 text-slate-400 hover:text-indigo-600">
+                  <i class="fa-regular fa-calendar text-base"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Kỳ hạn gửi</label>
+                <input type="number" id="single-term" value="6" min="1" oninput="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Đơn vị kỳ hạn</label>
+                <select id="single-term-unit" onchange="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
                   <option value="month" selected>Tháng</option>
                   <option value="day">Ngày</option>
                   <option value="year">Năm</option>
@@ -160,86 +306,65 @@
               </div>
             </div>
 
-            <!-- Lãi suất (Hỗ trợ 8,4 hoặc 8.4) -->
-            <div class="grid grid-cols-5 gap-2">
-              <div class="col-span-3">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Mức lãi suất (vd: 8,4 hoặc 8.4)</label>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Mức lãi suất (%/năm)</label>
                 <div class="relative">
-                  <input type="text" id="single-rate" value="5,8" oninput="calculateSingle();" class="w-full pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center outline-none">
+                  <input type="text" id="single-rate" value="5,8" oninput="calculateSingle();" class="w-full pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold outline-none">
                   <span class="absolute right-3 top-2.5 text-xs font-bold text-slate-400">%</span>
                 </div>
               </div>
-              <div class="col-span-2">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Chu kỳ</label>
-                <select id="single-rate-unit" onchange="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-semibold outline-none">
-                  <option value="year" selected>%/Năm</option>
-                  <option value="month">%/Tháng</option>
-                  <option value="day">%/Ngày</option>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Hình thức nhận lãi</label>
+                <select id="single-method" onchange="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
+                  <option value="end">Cuối kỳ (Đáo hạn)</option>
+                  <option value="monthly">Định kỳ hàng tháng</option>
+                  <option value="beginning">Đầu kỳ (Trả trước)</option>
                 </select>
               </div>
-            </div>
-
-            <!-- Phương thức nhận lãi -->
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Phương thức nhận tiền lãi</label>
-              <select id="single-method" onchange="calculateSingle();" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
-                <option value="end">Lĩnh lãi cuối kỳ (Nhận trọn gói khi đáo hạn)</option>
-                <option value="monthly">Lĩnh lãi định kỳ hàng tháng</option>
-                <option value="beginning">Lĩnh lãi đầu kỳ (Nhận ngay lúc bắt đầu gửi)</option>
-              </select>
             </div>
           </div>
         </div>
 
-        <!-- Bảng kết quả Tab 1 -->
         <div class="lg:col-span-6 flex flex-col gap-6">
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                  <i class="fa-solid fa-receipt text-indigo-600 mr-1.5"></i> Kết quả dự kiến
-                </h2>
-                <span id="single-maturity-badge" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-bold border border-indigo-100">
-                  Đáo hạn: --/--/----
-                </span>
-              </div>
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-1">
+            <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center justify-between">
+              <span><i class="fa-solid fa-receipt text-indigo-600"></i> Kết quả dự kiến</span>
+              <span id="single-maturity-badge" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-bold border border-indigo-100">
+                Đáo hạn: --/--/----
+              </span>
+            </h2>
 
-              <div class="grid grid-cols-2 gap-4 mb-5">
-                <div class="bg-emerald-50/80 p-4 rounded-xl border border-emerald-200">
-                  <div class="text-xs text-emerald-800 font-bold uppercase tracking-wider">Tổng tiền lãi nhận được</div>
-                  <div id="single-res-interest" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1">0 ₫</div>
-                  <div id="single-res-detail" class="text-[11px] text-emerald-700 mt-0.5 font-medium">Lĩnh cuối kỳ</div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                  <div class="text-xs text-slate-500 font-bold uppercase tracking-wider">Tổng nhận về (Gốc + Lãi)</div>
-                  <div id="single-res-total" class="text-xl sm:text-2xl font-black text-slate-900 mt-1">0 ₫</div>
-                  <div class="text-[11px] text-slate-400 mt-0.5">Gốc: <span id="single-res-principal" class="font-semibold text-slate-600">0 ₫</span></div>
-                </div>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div class="text-xs text-slate-500 font-medium">Tổng tiền lãi nhận được</div>
+                <div id="single-res-interest" class="text-xl font-black text-emerald-600 mt-1">0 ₫</div>
+                <div id="single-res-detail" class="text-[11px] text-slate-400 mt-0.5">--</div>
               </div>
-
-              <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2 text-xs">
-                <div class="flex justify-between py-0.5">
-                  <span class="text-slate-500">Số ngày gửi thực tế theo lịch:</span>
-                  <span id="single-res-days" class="font-bold text-slate-800">0 ngày</span>
-                </div>
-                <div class="flex justify-between py-0.5">
-                  <span class="text-slate-500">Tiền lãi bình quân mỗi tháng:</span>
-                  <span id="single-res-per-month" class="font-bold text-indigo-600">0 ₫/tháng</span>
-                </div>
-                <div class="flex justify-between py-0.5">
-                  <span class="text-slate-500">Tiền lãi bình quân mỗi ngày:</span>
-                  <span id="single-res-per-day" class="font-bold text-indigo-600">0 ₫/ngày</span>
-                </div>
-                <div class="flex justify-between py-0.5 border-t border-slate-200 pt-1.5">
-                  <span class="text-slate-500">Tỷ suất sinh lời thực tế:</span>
-                  <span id="single-res-yield" class="font-bold text-emerald-600">+0.00%</span>
-                </div>
+              <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div class="text-xs text-slate-500 font-medium">Tổng gốc và lãi</div>
+                <div id="single-res-total" class="text-xl font-black text-slate-900 mt-1">0 ₫</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Vốn gốc: <span id="single-res-principal">0 ₫</span></div>
               </div>
             </div>
 
-            <!-- Biểu đồ phân bổ -->
-            <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-center">
-              <div class="w-36 h-36">
+            <div class="border-t border-slate-100 pt-4 space-y-2 text-xs">
+              <div class="flex justify-between py-1">
+                <span class="text-slate-500">Số ngày thực gửi:</span>
+                <span id="single-res-days" class="font-bold text-slate-700">0 ngày</span>
+              </div>
+              <div class="flex justify-between py-1">
+                <span class="text-slate-500">Lãi bình quân mỗi tháng:</span>
+                <span id="single-res-per-month" class="font-bold text-indigo-600">0 ₫/tháng</span>
+              </div>
+              <div class="flex justify-between py-1">
+                <span class="text-slate-500">Lãi bình quân mỗi ngày:</span>
+                <span id="single-res-per-day" class="font-bold text-indigo-600">0 ₫/ngày</span>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100">
+              <div class="w-40 h-40 mx-auto">
                 <canvas id="singleChart"></canvas>
               </div>
             </div>
@@ -249,400 +374,96 @@
       </div>
     </section>
 
-    <section id="tab-compare" class="hidden">
-      <!-- Cảnh báo bản chất bài toán -->
-      <div class="bg-indigo-50 border border-indigo-200/80 p-4 rounded-2xl mb-6 text-xs text-indigo-950">
-        <div class="flex items-start gap-2.5">
-          <i class="fa-solid fa-circle-info text-indigo-600 text-base mt-0.5"></i>
-          <div class="space-y-1 leading-relaxed">
-            <span class="font-bold uppercase tracking-wide text-indigo-900">Bản chất thẩm định thiệt hại rút non & bù đắp gói mới:</span>
-            <div>
-              • <b>Thiệt hại rút non</b>: Sau $D$ ngày gửi, nếu rút non bạn sẽ bị mất toàn bộ khoản lãi có kỳ hạn đã tích lũy và chỉ nhận lãi không kỳ hạn (~0% - 0.2%).
-            </div>
-            <div>
-              • <b>Câu hỏi quyết định</b>: <i>"Tổng tiền lãi kiếm được ở gói mới có bù đắp nổi số tiền lãi đã bị mất trắng sau $D$ ngày hay không?"</i>. Nếu bù nổi và còn dôi dư lớn hơn việc giữ tiếp sổ cũ $\rightarrow$ <b>NÊN RÚT ĐỔI</b>; nếu không bù nổi $\rightarrow$ <b>KHÔNG NÊN RÚT (CHẮC CHẮN LỖ)</b>.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-        
-        <!-- CỘT 1: SỔ CŨ ĐANG GỬI -->
-        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
-            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-              <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold">1</span>
-              Sổ Cũ Hiện Tại (Phương Án 1)
-            </h3>
-            <span class="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">Đang gửi</span>
-          </div>
-
-          <div class="space-y-3.5">
-            <!-- Vốn gửi A -->
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Số tiền vốn gửi A (VND)</label>
-              <div class="relative">
-                <input type="text" id="cur-amount" value="12,000,000" 
-                       oninput="formatCurrencyInput(this); calculateEvaluation();" 
-                       class="w-full pl-3 pr-12 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">VND</span>
-              </div>
-            </div>
-
-            <!-- Ngày bắt đầu gửi -->
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">
-                Ngày bắt đầu gửi <span class="text-slate-400 font-normal lowercase">(dd/mm/yyyy)</span>
-              </label>
-              <div class="relative flex items-center">
-                <input type="text" id="cur-start-date" placeholder="dd/mm/yyyy" 
-                       class="w-full pl-3 pr-9 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500"
-                       oninput="handleManualDateInput(this, 'cur');" 
-                       onblur="validateDateBlur(this, 'cur');">
-                <button type="button" onclick="openPicker('cur-start-date')" class="absolute right-2.5 text-slate-400 hover:text-indigo-600 p-1">
-                  <i class="fa-regular fa-calendar-days text-sm"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Kỳ hạn cũ C -->
-            <div class="grid grid-cols-5 gap-2">
-              <div class="col-span-3">
-                <label class="block text-xs font-bold text-slate-600 mb-1">Kỳ hạn cũ C</label>
-                <input type="number" id="cur-term" value="6" min="1" oninput="calculateEvaluation();" class="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-center outline-none">
-              </div>
-              <div class="col-span-2">
-                <label class="block text-xs font-bold text-slate-600 mb-1">Đơn vị</label>
-                <select id="cur-term-unit" onchange="calculateEvaluation();" class="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
-                  <option value="month" selected>Tháng</option>
-                  <option value="day">Ngày</option>
-                  <option value="year">Năm</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Lãi suất gốc B -->
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất cam kết ban đầu B (%/năm)</label>
-              <div class="relative">
-                <input type="text" id="cur-rate" value="8,4" oninput="calculateEvaluation();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
-              </div>
-            </div>
-
-            <!-- Lãi suất không kỳ hạn khi rút non -->
-            <div class="pt-2 border-t border-slate-100">
-              <label class="block text-xs font-bold text-slate-600 mb-1">
-                Lãi suất không kỳ hạn khi rút non (%/năm)
-              </label>
-              <div class="grid grid-cols-5 gap-2">
-                <input type="text" id="cur-demand-rate" value="0,2" oninput="calculateEvaluation();" class="col-span-3 px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-center outline-none">
-                <button type="button" onclick="setZeroDemandRate()" class="col-span-2 px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-xl font-bold transition">Mất hết (0%)</button>
-              </div>
-              <p class="text-[11px] text-slate-400 mt-1">Nếu ngân hàng không tính lãi khi rút non, bấm 0%.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- CỘT 2: KẾ HOẠCH RÚT & GÓI MỚI -->
-        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
-            <h3 class="font-bold text-indigo-900 flex items-center gap-2 text-sm">
-              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">2</span>
-              Kế Hoạch Rút & Gói Mới (Phương Án 2)
-            </h3>
-            <span class="text-[11px] font-semibold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-100">Đổi gói</span>
-          </div>
-
-          <div class="space-y-3.5">
-            <!-- Ngày quyết định rút non -->
-            <div class="bg-indigo-50/60 p-3 rounded-xl border border-indigo-100">
-              <label class="block text-xs font-bold text-indigo-950 mb-1">
-                Ngày quyết định rút non <span class="text-indigo-500 font-normal lowercase">(dd/mm/yyyy)</span>
-              </label>
-              <div class="relative flex items-center">
-                <input type="text" id="withdraw-date" placeholder="dd/mm/yyyy" 
-                       class="w-full pl-3 pr-9 py-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-indigo-900 outline-none focus:ring-2 focus:ring-indigo-500"
-                       oninput="handleManualDateInput(this, 'withdraw');" 
-                       onblur="validateDateBlur(this, 'withdraw');">
-                <button type="button" onclick="openPicker('withdraw-date')" class="absolute right-2.5 text-indigo-500 hover:text-indigo-700 p-1">
-                  <i class="fa-regular fa-calendar-days text-sm"></i>
-                </button>
-              </div>
-              <div id="holding-days-info" class="text-xs text-indigo-700 font-semibold mt-2 flex items-center gap-1.5">
-                <i class="fa-solid fa-clock"></i>
-                <span>Sổ cũ đã gửi được: <b>-- ngày</b></span>
-              </div>
-            </div>
-
-            <!-- Kỳ hạn gói mới E -->
-            <div class="grid grid-cols-5 gap-2">
-              <div class="col-span-3">
-                <label class="block text-xs font-bold text-slate-600 mb-1">Kỳ hạn gói mới E</label>
-                <input type="number" id="new-term" value="6" min="1" oninput="calculateEvaluation();" class="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-center outline-none">
-              </div>
-              <div class="col-span-2">
-                <label class="block text-xs font-bold text-slate-600 mb-1">Đơn vị</label>
-                <select id="new-term-unit" onchange="calculateEvaluation();" class="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
-                  <option value="month" selected>Tháng</option>
-                  <option value="day">Ngày</option>
-                  <option value="year">Năm</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Lãi suất gói mới -->
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất gói mới (%/năm) (vd: 8,86 hoặc 8.86)</label>
-              <div class="relative">
-                <input type="text" id="new-rate" value="8,86" oninput="calculateEvaluation();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-indigo-600 outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
-              </div>
-            </div>
-
-            <!-- Thời gian chi tiết gói mới -->
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1">
-              <div class="flex justify-between text-slate-500">
-                <span>Số ngày gửi trọn kỳ hạn mới:</span>
-                <span id="new-total-days-info" class="font-bold text-slate-800">-- ngày</span>
-              </div>
-              <div class="flex justify-between text-slate-500">
-                <span>Ngày đáo hạn sổ mới:</span>
-                <span id="new-maturity-date-info" class="font-bold text-indigo-700">--/--/----</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CỘT 3: KẾT LUẬN THẨM ĐỊNH LỜI / LỖ -->
-        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-          <div>
-            <div class="border-b border-slate-100 pb-3 mb-3 flex items-center justify-between">
-              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                <i class="fa-solid fa-chart-line text-indigo-600"></i>
-                Kết Quả Thẩm Định Ròng
-              </h3>
-              <span class="text-[11px] font-bold text-slate-400">ĐỐI SOÁT</span>
-            </div>
-
-            <!-- Khối thông báo Lời / Lỗ rõ ràng -->
-            <div id="eval-decision-box" class="p-4 rounded-2xl border text-center transition-all mb-3.5">
-              <div id="eval-decision-badge" class="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1.5">
-                ĐANG TÍNH TOÁN
-              </div>
-              <div id="eval-diff-amount" class="text-2xl sm:text-3xl font-black mb-1">0 ₫</div>
-              <div id="eval-decision-summary" class="text-xs leading-relaxed font-medium">--</div>
-            </div>
-
-            <!-- Khối hiển thị thiệt hại tiền mất trắng sau D ngày -->
-            <div class="bg-rose-50 border border-rose-200 p-3 rounded-xl mb-3">
-              <div class="flex items-center justify-between text-rose-900 text-xs font-bold">
-                <span class="flex items-center gap-1.5">
-                  <i class="fa-solid fa-fire text-rose-600"></i> Lãi bị mất trắng do rút non:
-                </span>
-                <span id="eval-lost-amount" class="text-sm font-black text-rose-700">0 ₫</span>
-              </div>
-              <p class="text-[11px] text-rose-700/80 mt-1 leading-tight">
-                Là khoản tiền lãi đã tích lũy trong <span id="eval-lost-days" class="font-bold">0</span> ngày qua nhưng bị ngân hàng thu hồi do rút trước hạn.
-              </p>
-            </div>
-
-            <!-- Tóm tắt thặng dư sau khi gói mới gánh thiệt hại -->
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
-              <div class="flex justify-between items-center text-slate-600">
-                <span>Lãi gói mới trọn kỳ hạn:</span>
-                <span id="eval-new-raw-interest" class="font-bold text-indigo-600">0 ₫</span>
-              </div>
-              <div class="flex justify-between items-center text-slate-600">
-                <span>Thặng dư sau khi bù lỗ:</span>
-                <span id="eval-net-surplus" class="font-extrabold text-slate-900">0 ₫</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-400 text-center">
-            * Quy chuẩn 365 ngày/năm theo Thông tư 14/2017/TT-NHNN.
-          </div>
-        </div>
-
-      </div>
-
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-table-list text-indigo-400"></i>
-            <h3 class="font-bold text-sm sm:text-base">Bảng Thẩm Định 4 Bước Chi Tiết (Có Bù Nổi Thiệt Hại Không?)</h3>
-          </div>
-          <span class="text-xs text-slate-400">Quy chuẩn đối soát dòng tiền</span>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs sm:text-sm text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
-                <th class="py-3 px-4 w-1/12 text-center">Bước</th>
-                <th class="py-3 px-4 w-5/12">Chỉ số & Nghiệp vụ tính toán</th>
-                <th class="py-3 px-4 w-3/12">Công thức toán học</th>
-                <th class="py-3 px-4 w-3/12 text-right">Giá trị tính toán</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200 text-slate-700">
-              <!-- Bước 1 -->
-              <tr class="hover:bg-slate-50/80">
-                <td class="py-3 px-4 text-center font-bold text-slate-400">1</td>
-                <td class="py-3 px-4">
-                  <div class="font-bold text-slate-900">Thiệt hại thực tế khi vừa rút non</div>
-                  <div class="text-[11px] text-slate-500">Lãi kỳ vọng tích lũy D ngày trừ đi tiền lãi không kỳ hạn thực nhận</div>
-                </td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-600">Lãi_kỳ_vọng - Lãi_không_kỳ_hạn</td>
-                <td id="step-1-val" class="py-3 px-4 text-right font-black text-rose-600">0 ₫</td>
-              </tr>
-
-              <!-- Bước 2 -->
-              <tr class="hover:bg-slate-50/80">
-                <td class="py-3 px-4 text-center font-bold text-slate-400">2</td>
-                <td class="py-3 px-4">
-                  <div class="font-bold text-slate-900">Tiền lãi trọn kỳ hạn của gói mới</div>
-                  <div class="text-[11px] text-slate-500">Gửi toàn bộ vốn vào gói mới kỳ hạn E với mức lãi suất mới</div>
-                </td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-600">(A × Lãi_mới × Số_ngày_mới) / 365</td>
-                <td id="step-2-val" class="py-3 px-4 text-right font-black text-indigo-600">0 ₫</td>
-              </tr>
-
-              <!-- Bước 3 -->
-              <tr class="hover:bg-slate-50/80 bg-indigo-50/30">
-                <td class="py-3 px-4 text-center font-bold text-indigo-600">3</td>
-                <td class="py-3 px-4">
-                  <div class="font-bold text-indigo-950">Thặng dư sau khi gói mới gánh thiệt hại</div>
-                  <div class="text-[11px] text-indigo-800/80">Tiền lãi gói mới còn dôi ra bao nhiêu sau khi đã trừ số lãi bị mất trắng</div>
-                </td>
-                <td class="py-3 px-4 font-mono text-xs text-indigo-900">Lãi_mới - Thiệt_hại_rút_non</td>
-                <td id="step-3-val" class="py-3 px-4 text-right font-black text-indigo-950 text-base">0 ₫</td>
-              </tr>
-
-              <!-- Bước 4 -->
-              <tr class="hover:bg-slate-50/80">
-                <td class="py-3 px-4 text-center font-bold text-slate-400">4</td>
-                <td class="py-3 px-4">
-                  <div class="font-bold text-slate-900">So sánh với Giữ nguyên sổ cũ đến ngày đáo hạn</div>
-                  <div class="text-[11px] text-slate-500">Nếu không rút mà kiên nhẫn chờ đến ngày đáo hạn ban đầu</div>
-                </td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-600">(A × Lãi_cũ × Tổng_ngày_cũ) / 365</td>
-                <td id="step-4-val" class="py-3 px-4 text-right font-black text-slate-800">0 ₫</td>
-              </tr>
-
-              <!-- Kết luận ròng -->
-              <tr class="bg-slate-100 font-bold border-t-2 border-slate-300">
-                <td colspan="2" class="py-3.5 px-4 text-slate-900 text-sm">
-                  CHÊNH LỆCH RÒNG (Tổng thu khi rút chuyển gói - Tổng thu nếu giữ nguyên):
-                </td>
-                <td class="py-3.5 px-4 font-mono text-xs text-slate-600">Tổng_thu_PA2 - Tổng_thu_PA1</td>
-                <td id="step-net-diff" class="py-3.5 px-4 text-right font-black text-base sm:text-lg">0 ₫</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
   </main>
 
-  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <p>© 2026 TrietPhg Tools • Hỗ trợ nhập ngày dd/mm/yyyy & kiểm định thiệt hại rút non</p>
-      <p class="text-slate-400">trietphg.github.io/tools</p>
-    </div>
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    <p>© 2026 TrietPhg Tools • Thẩm định tài chính cá nhân chuẩn mực • trietphg.github.io/tools</p>
   </footer>
 
+  <!-- SCRIPT LOGIC -->
   <script>
-    // --- Utility Functions ---
     const formatVND = (num) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Math.round(num));
-
     const parseNumber = (str) => {
       if (!str) return 0;
       return parseFloat(str.toString().replace(/,/g, '')) || 0;
     };
-
-    // Hỗ trợ cả 8,4 và 8.4
     const parseRateInput = (str) => {
       if (!str) return 0;
-      let clean = str.toString().trim().replace(/,/g, '.');
-      return parseFloat(clean) || 0;
+      return parseFloat(str.toString().replace(/,/g, '.')) || 0;
     };
-
-    const formatWithCommas = (num) => {
-      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    };
+    const formatWithCommas = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     function formatCurrencyInput(input) {
       let val = input.value.replace(/\D/g, '');
       input.value = val ? formatWithCommas(val) : '';
     }
 
-    // Các nút tăng giảm tiền Tab 1
-    function adjustAmountSingle(val) {
-      const input = document.getElementById('single-amount');
-      let cur = parseNumber(input.value);
-      let nextVal = Math.max(0, cur + val);
-      input.value = formatWithCommas(nextVal);
-      calculateSingle();
-    }
-
-    function setAmountSingle(val) {
-      const input = document.getElementById('single-amount');
-      input.value = formatWithCommas(val);
-      calculateSingle();
+    function modifyAmount(elementId, delta) {
+      const input = document.getElementById(elementId);
+      let current = parseNumber(input.value);
+      let next = Math.max(0, current + delta);
+      input.value = formatWithCommas(next);
+      if (elementId === 'single-amount') calculateSingle();
+      if (elementId === 'cur-amount') calculateOpportunityTradeoff();
     }
 
     function setZeroDemandRate() {
-      document.getElementById('cur-demand-rate').value = "0";
-      calculateEvaluation();
+      document.getElementById('cur-demand-rate').value = '0';
+      calculateOpportunityTradeoff();
     }
 
-    function resetSingleForm() {
-      document.getElementById('single-amount').value = "100,000,000";
-      document.getElementById('single-term').value = "6";
-      document.getElementById('single-term-unit').value = "month";
-      document.getElementById('single-rate').value = "5,8";
-      document.getElementById('single-rate-unit').value = "year";
-      document.getElementById('single-method').value = "end";
-      if (fpSingle) fpSingle.setDate(new Date(), true, "d/m/Y");
-      calculateSingle();
-    }
-
-    // --- Strict dd/mm/yyyy Date Parsing & Manipulation ---
-    function parseDateDDMMYYYY(str) {
-      if (!str) return null;
-      let clean = str.trim();
-      let parts;
-      if (clean.includes('/') || clean.includes('-')) {
-        parts = clean.split(/[\/\-]/);
-      } else if (clean.length === 8 && /^\d+$/.test(clean)) {
-        parts = [clean.substring(0, 2), clean.substring(2, 4), clean.substring(4, 8)];
-      } else {
-        return null;
-      }
-
-      if (parts.length === 3) {
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const year = parseInt(parts[2], 10);
-        if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900 && year <= 2100) {
-          const d = new Date(year, month, day);
-          if (d.getDate() === day && d.getMonth() === month && d.getFullYear() === year) {
-            return d;
-          }
-        }
-      }
-      return null;
-    }
-
-    function formatDateDDMMYYYY(date) {
-      if (!date || isNaN(date.getTime())) return "";
+    function formatDateVN(date) {
       const d = String(date.getDate()).padStart(2, '0');
       const m = String(date.getMonth() + 1).padStart(2, '0');
       const y = date.getFullYear();
       return `${d}/${m}/${y}`;
+    }
+
+    function parseDateVN(dateStr) {
+      if (!dateStr) return null;
+      const cleanStr = dateStr.replace(/\D/g, '');
+      if (cleanStr.length === 8) {
+        const d = parseInt(cleanStr.substring(0, 2), 10);
+        const m = parseInt(cleanStr.substring(2, 4), 10) - 1;
+        const y = parseInt(cleanStr.substring(4, 8), 10);
+        const date = new Date(y, m, d);
+        if (date.getFullYear() === y && date.getMonth() === m && date.getDate() === d) return date;
+      }
+      const parts = dateStr.split(/[-/]/);
+      if (parts.length === 3) {
+        const d = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const y = parseInt(parts[2], 10);
+        const date = new Date(y, m, d);
+        if (date.getFullYear() === y && date.getMonth() === m && date.getDate() === d) return date;
+      }
+      return null;
+    }
+
+    function handleManualDateInput(inputElem, pickerInstance, callback) {
+      let val = inputElem.value;
+      let digits = val.replace(/\D/g, '');
+      if (digits.length >= 8) {
+        let formatted = `${digits.substring(0,2)}/${digits.substring(2,4)}/${digits.substring(4,8)}`;
+        inputElem.value = formatted;
+        let parsed = parseDateVN(formatted);
+        if (parsed && pickerInstance) {
+          pickerInstance.setDate(parsed, false);
+          callback();
+        }
+      } else {
+        let parsed = parseDateVN(val);
+        if (parsed && pickerInstance) {
+          pickerInstance.setDate(parsed, false);
+          callback();
+        }
+      }
+    }
+
+    function getDaysDiff(date1, date2) {
+      const diffTime = date2.getTime() - date1.getTime();
+      return Math.max(0, Math.round(diffTime / (1000 * 60 * 60 * 24)));
     }
 
     function addTermToDate(startDate, term, unit) {
@@ -657,101 +478,164 @@
       return d;
     }
 
-    function getDaysDiff(date1, date2) {
-      const diffTime = date2.getTime() - date1.getTime();
-      return Math.round(diffTime / (1000 * 60 * 60 * 24));
+    function switchTab(tab) {
+      const tabCompare = document.getElementById('tab-compare');
+      const tabSingle = document.getElementById('tab-single');
+      const btnCompare = document.getElementById('tab-btn-compare');
+      const btnSingle = document.getElementById('tab-btn-single');
+
+      if (tab === 'compare') {
+        tabCompare.classList.remove('hidden');
+        tabSingle.classList.add('hidden');
+        btnCompare.className = "py-3 px-5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 transition-all";
+        btnSingle.className = "py-3 px-5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 transition-all";
+        calculateOpportunityTradeoff();
+      } else {
+        tabCompare.classList.add('hidden');
+        tabSingle.classList.remove('hidden');
+        btnSingle.className = "py-3 px-5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 transition-all";
+        btnCompare.className = "py-3 px-5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 transition-all";
+        calculateSingle();
+      }
     }
 
-    let fpSingle, fpCurStart, fpWithdraw;
+    // --- Flatpickr Global Instances ---
+    let curDatePicker, withdrawDatePicker, singleDatePicker;
 
-    function initPickers() {
-      const sampleCurDate = new Date(2026, 8, 16); // 16/09/2026
-      const sampleWithdrawDate = new Date(2026, 8, 18); // 18/09/2026
+    document.addEventListener('DOMContentLoaded', () => {
+      // Thiết lập ngày mặc định: gửi 26 ngày trước, hôm nay quyết định rút
+      const today = new Date();
+      const twentySixDaysAgo = new Date();
+      twentySixDaysAgo.setDate(twentySixDaysAgo.getDate() - 26);
 
-      fpSingle = flatpickr("#single-start-date", {
+      curDatePicker = flatpickr("#cur-start-date", {
         dateFormat: "d/m/Y",
-        defaultDate: sampleCurDate,
-        allowInput: true,
+        defaultDate: twentySixDaysAgo,
         locale: "vn",
+        allowInput: true,
+        onChange: () => calculateOpportunityTradeoff()
+      });
+
+      withdrawDatePicker = flatpickr("#withdraw-date", {
+        dateFormat: "d/m/Y",
+        defaultDate: today,
+        locale: "vn",
+        allowInput: true,
+        onChange: () => calculateOpportunityTradeoff()
+      });
+
+      singleDatePicker = flatpickr("#single-start-date", {
+        dateFormat: "d/m/Y",
+        defaultDate: today,
+        locale: "vn",
+        allowInput: true,
         onChange: () => calculateSingle()
       });
 
-      fpCurStart = flatpickr("#cur-start-date", {
-        dateFormat: "d/m/Y",
-        defaultDate: sampleCurDate,
-        allowInput: true,
-        locale: "vn",
-        onChange: () => calculateEvaluation()
-      });
+      initChart();
+      calculateOpportunityTradeoff();
+    });
 
-      fpWithdraw = flatpickr("#withdraw-date", {
-        dateFormat: "d/m/Y",
-        defaultDate: sampleWithdrawDate,
-        allowInput: true,
-        locale: "vn",
-        onChange: () => calculateEvaluation()
-      });
-    }
+    // --- LOGIC THẨM ĐỊNH CHI PHÍ CƠ HỘI CHUẨN XÁC 100% ---
+    function calculateOpportunityTradeoff() {
+      const P = parseNumber(document.getElementById('cur-amount').value);
+      const rA = parseRateInput(document.getElementById('cur-rate').value);
+      const rDemand = parseRateInput(document.getElementById('cur-demand-rate').value);
 
-    function openPicker(inputId) {
-      const el = document.getElementById(inputId);
-      if (el && el._flatpickr) {
-        el._flatpickr.open();
-      }
-    }
+      const newTermVal = parseInt(document.getElementById('new-term').value) || 0;
+      const newTermUnit = document.getElementById('new-term-unit').value;
+      const rB = parseRateInput(document.getElementById('new-rate').value);
 
-    function handleManualDateInput(inputElem, type) {
-      const parsed = parseDateDDMMYYYY(inputElem.value);
-      if (parsed) {
-        if (type === 'single' && fpSingle) {
-          fpSingle.setDate(parsed, false);
-          calculateSingle();
-        } else if (type === 'cur' && fpCurStart) {
-          fpCurStart.setDate(parsed, false);
-          calculateEvaluation();
-        } else if (type === 'withdraw' && fpWithdraw) {
-          fpWithdraw.setDate(parsed, false);
-          calculateEvaluation();
-        }
-      }
-    }
+      if (!curDatePicker || !withdrawDatePicker) return;
+      const startDate = curDatePicker.selectedDates[0];
+      const withdrawDate = withdrawDatePicker.selectedDates[0];
+      if (!startDate || !withdrawDate) return;
 
-    function validateDateBlur(inputElem, type) {
-      const parsed = parseDateDDMMYYYY(inputElem.value);
-      if (parsed) {
-        inputElem.value = formatDateDDMMYYYY(parsed);
-        if (type === 'single') fpSingle.setDate(parsed, true);
-        if (type === 'cur') fpCurStart.setDate(parsed, true);
-        if (type === 'withdraw') fpWithdraw.setDate(parsed, true);
+      // 1. Tính số ngày đã giữ vốn (d ngày)
+      const d = getDaysDiff(startDate, withdrawDate);
+      document.getElementById('holding-days-count').textContent = d;
+      document.getElementById('res-d-days').textContent = d;
+
+      // 2. Tính số ngày chuẩn của kỳ hạn mới N (chuẩn 180 ngày cho 6 tháng)
+      const newMaturityDate = addTermToDate(withdrawDate, newTermVal, newTermUnit);
+      let N = getDaysDiff(withdrawDate, newMaturityDate);
+      // Nếu là kỳ hạn tháng tiêu chuẩn 6 tháng, ngân hàng thường tính dao động 180-184 ngày
+      document.getElementById('new-term-days-count').textContent = `${N} ngày`;
+
+      // 3. Hiển thị mức chênh lệch lãi suất
+      const deltaRate = rB - rA;
+      const rateIndicator = document.getElementById('rate-diff-indicator');
+      if (deltaRate > 0) {
+        rateIndicator.className = "text-[11px] text-emerald-600 font-bold mt-1";
+        rateIndicator.textContent = `Chênh lệch: +${deltaRate.toFixed(2).replace('.', ',')}%/năm`;
       } else {
-        if (type === 'single' && fpSingle.selectedDates[0]) inputElem.value = formatDateDDMMYYYY(fpSingle.selectedDates[0]);
-        if (type === 'cur' && fpCurStart.selectedDates[0]) inputElem.value = formatDateDDMMYYYY(fpCurStart.selectedDates[0]);
-        if (type === 'withdraw' && fpWithdraw.selectedDates[0]) inputElem.value = formatDateDDMMYYYY(fpWithdraw.selectedDates[0]);
+        rateIndicator.className = "text-[11px] text-rose-600 font-bold mt-1";
+        rateIndicator.textContent = `Chênh lệch: ${deltaRate.toFixed(2).replace('.', ',')}%/năm (Lãi mới thấp hơn hoặc bằng)`;
       }
-    }
 
-    function switchTab(tab) {
-      const tabSingle = document.getElementById('tab-single');
-      const tabCompare = document.getElementById('tab-compare');
-      const btnSingle = document.getElementById('btn-tab-single');
-      const btnCompare = document.getElementById('btn-tab-compare');
+      // --- BƯỚC 1: CÁI GIÁ PHẢI TRẢ (LÃI TÍCH LŨY GÓI A BỊ MẤT SẠCH DO RÚT NON) ---
+      // Nếu ngân hàng không tính lãi (0%), mất trọn (P * rA * d)/365. Nếu có lãi không kỳ hạn, trừ bớt phần đó.
+      const lostInterest = (P * ((rA - rDemand) / 100) * d) / 365;
 
-      if (tab === 'single') {
-        tabSingle.classList.remove('hidden');
-        tabCompare.classList.add('hidden');
-        btnSingle.className = "tab-btn-active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center gap-2";
-        btnCompare.className = "text-slate-600 hover:text-slate-900 px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center gap-2";
-        calculateSingle();
+      // --- BƯỚC 2: TỔNG LÃI GÓI B TRỌN KỲ HẠN N NGÀY ---
+      const gainB = (P * (rB / 100) * N) / 365;
+
+      // --- BƯỚC 3: TỔNG LÃI GÓI A CHUẨN TRỌN KỲ HẠN N NGÀY ---
+      const gainA = (P * (rA / 100) * N) / 365;
+
+      // --- BƯỚC 4: PHẦN LÃI CHÊNH LỆCH GÓI B MANG LẠI THÊM SO VỚI GÓI A ---
+      const extraGain = gainB - gainA;
+
+      // --- BƯỚC 5: CÂN ĐỐI TRADE-OFF RÒNG ---
+      // Lợi ích ròng = (Phần thặng dư Gói B đem lại) - (Cái giá d ngày đã mất trắng)
+      const deltaNet = extraGain - lostInterest;
+
+      // Cập nhật lên giao diện
+      document.getElementById('res-lost-interest').textContent = '-' + formatVND(lostInterest);
+      document.getElementById('res-extra-gain').textContent = '+' + formatVND(extraGain);
+      document.getElementById('res-gain-b').textContent = formatVND(gainB);
+      document.getElementById('res-gain-a').textContent = formatVND(gainA);
+
+      // Tỷ lệ kinh tế
+      const ratioRate = rA > 0 ? (deltaRate / (rA - rDemand)) * 100 : 0;
+      const ratioTime = N > 0 ? (d / N) * 100 : 0;
+      document.getElementById('res-ratio-rate').textContent = (ratioRate >= 0 ? '+' : '') + ratioRate.toFixed(2) + '%';
+      document.getElementById('res-ratio-time').textContent = ratioTime.toFixed(2) + '%';
+
+      // HIỂN THỊ KẾT LUẬN MINH BẠCH
+      const card = document.getElementById('decision-card');
+      const statusBadge = document.getElementById('decision-status');
+      const netAmountElem = document.getElementById('decision-net-amount');
+      const detailText = document.getElementById('decision-detail-text');
+
+      if (d === 0) {
+        card.className = "p-4 rounded-xl border border-blue-200 bg-blue-50 text-center mb-4";
+        statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-blue-100 text-blue-800";
+        statusBadge.textContent = "VỪA MỚI GỬI (0 NGÀY)";
+        netAmountElem.className = "text-3xl font-black mb-1 text-blue-700";
+        netAmountElem.textContent = '+' + formatVND(extraGain);
+        detailText.textContent = "Bạn vừa mới mở sổ, chưa có lãi tích lũy bị mất. Đổi sang Gói B ngay lập tức sẽ hưởng trọn vẹn phần chênh lệch thặng dư.";
+      } else if (deltaNet > 0) {
+        // CÓ LỜI THỰC TẾ
+        card.className = "p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-center mb-4";
+        statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-emerald-100 text-emerald-800";
+        statusBadge.textContent = "NÊN ĐỔI SỔ - CÓ LỜI RÒNG";
+        netAmountElem.className = "text-3xl font-black mb-1 text-emerald-700";
+        netAmountElem.textContent = '+' + formatVND(deltaNet);
+        detailText.textContent = `Lãi suất Gói B đủ cao (+${deltaRate.toFixed(2)}%/năm) để gánh hết khoản lãi ${formatVND(lostInterest)} bị mất của ${d} ngày qua và đem lại thêm ${formatVND(deltaNet)} lợi nhuận ròng.`;
       } else {
-        tabSingle.classList.add('hidden');
-        tabCompare.classList.remove('hidden');
-        btnCompare.className = "tab-btn-active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center gap-2";
-        btnSingle.className = "text-slate-600 hover:text-slate-900 px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center gap-2";
-        calculateEvaluation();
+        // ĐANG LỖ (SỐ ÂM) - KHÔNG ĐƯỢC CHUYỂN
+        const lossAmount = Math.abs(deltaNet);
+        card.className = "p-4 rounded-xl border border-rose-200 bg-rose-50 text-center mb-4";
+        statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-rose-100 text-rose-800";
+        statusBadge.textContent = "ÂM: KHÔNG NÊN ĐỔI - CHẮC CHẮN BỊ LỖ!";
+        netAmountElem.className = "text-3xl font-black mb-1 text-rose-700";
+        netAmountElem.textContent = '-' + formatVND(lossAmount);
+        detailText.textContent = `Mức tiền kiếm thêm từ lãi suất cao hơn (${formatVND(extraGain)}) không đủ để bù lại khoản tiền lãi ${formatVND(lostInterest)} của ${d} ngày bạn đã ngâm vốn. Đổi lúc này bạn sẽ bị thiệt hại ròng ${formatVND(lossAmount)}.`;
       }
     }
 
-    // --- STREAMING_CHUNK:Chart rendering and Single Tab Calculation ---
+    // --- TAB TÍNH LÃI ĐƠN LẺ ---
     let singleChart;
     function initChart() {
       const ctx = document.getElementById('singleChart').getContext('2d');
@@ -761,210 +645,58 @@
           labels: ['Gốc', 'Lãi'],
           datasets: [{
             data: [100000000, 2900000],
-            backgroundColor: ['#6366f1', '#10b981'],
+            backgroundColor: ['#4f46e5', '#10b981'],
             borderWidth: 0
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return ' ' + context.label + ': ' + formatVND(context.raw);
-                }
-              }
-            }
-          },
-          cutout: '72%'
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } },
+          cutout: '70%'
         }
       });
     }
 
     function calculateSingle() {
-      const principal = parseNumber(document.getElementById('single-amount').value);
+      const P = parseNumber(document.getElementById('single-amount').value);
       const term = parseInt(document.getElementById('single-term').value) || 0;
       const termUnit = document.getElementById('single-term-unit').value;
-      const rawRate = parseRateInput(document.getElementById('single-rate').value);
-      const rateUnit = document.getElementById('single-rate-unit').value;
+      const r = parseRateInput(document.getElementById('single-rate').value);
       const method = document.getElementById('single-method').value;
 
-      let annualRate = rawRate;
-      if (rateUnit === 'month') annualRate = rawRate * 12;
-      if (rateUnit === 'day') annualRate = rawRate * 365;
-
-      const startDate = fpSingle ? fpSingle.selectedDates[0] : new Date();
-      if (!startDate) return;
-
+      if (!singleDatePicker) return;
+      const startDate = singleDatePicker.selectedDates[0] || new Date();
       const maturityDate = addTermToDate(startDate, term, termUnit);
-      const totalDays = Math.max(1, getDaysDiff(startDate, maturityDate));
+      const totalDays = getDaysDiff(startDate, maturityDate);
 
-      document.getElementById('single-maturity-badge').textContent = `Đáo hạn: ${formatDateDDMMYYYY(maturityDate)}`;
+      document.getElementById('single-maturity-badge').textContent = `Đáo hạn: ${formatDateVN(maturityDate)}`;
       document.getElementById('single-res-days').textContent = `${totalDays} ngày`;
 
-      // Chuẩn TT 14/2017/TT-NHNN: Lãi = (Số dư * Số ngày thực tế * Lãi suất %/năm) / 365
-      const interest = (principal * (annualRate / 100) * totalDays) / 365;
-      const totalReceived = principal + interest;
-
-      if (method === 'beginning') {
-        document.getElementById('single-res-detail').textContent = 'Nhận trọn tiền lãi ngay lúc gửi';
-      } else if (method === 'monthly') {
-        const months = termUnit === 'month' ? term : (termUnit === 'year' ? term * 12 : Math.max(1, Math.round(totalDays / 30.416)));
-        document.getElementById('single-res-detail').textContent = `Nhận đều ~${formatVND(interest / months)}/tháng`;
-      } else {
-        document.getElementById('single-res-detail').textContent = 'Lĩnh trọn gói gốc + lãi khi đáo hạn';
-      }
+      const interest = (P * (r / 100) * totalDays) / 365;
+      const total = P + interest;
 
       document.getElementById('single-res-interest').textContent = formatVND(interest);
-      document.getElementById('single-res-total').textContent = formatVND(totalReceived);
-      document.getElementById('single-res-principal').textContent = formatVND(principal);
+      document.getElementById('single-res-total').textContent = formatVND(total);
+      document.getElementById('single-res-principal').textContent = formatVND(P);
 
       const monthsCount = Math.max(1, totalDays / 30.416);
       document.getElementById('single-res-per-month').textContent = formatVND(interest / monthsCount) + '/tháng';
-      document.getElementById('single-res-per-day').textContent = formatVND(interest / totalDays) + '/ngày';
+      document.getElementById('single-res-per-day').textContent = formatVND(totalDays > 0 ? interest / totalDays : 0) + '/ngày';
 
-      const yieldPercent = principal > 0 ? ((interest / principal) * 100).toFixed(2) : "0.00";
-      document.getElementById('single-res-yield').textContent = `+${yieldPercent}%`;
+      if (method === 'beginning') {
+        document.getElementById('single-res-detail').textContent = 'Nhận ngay khi gửi';
+      } else if (method === 'monthly') {
+        document.getElementById('single-res-detail').textContent = `~${formatVND(interest / monthsCount)}/tháng`;
+      } else {
+        document.getElementById('single-res-detail').textContent = 'Nhận trọn gói khi đáo hạn';
+      }
 
       if (singleChart) {
-        singleChart.data.datasets[0].data = [principal, Math.round(interest)];
+        singleChart.data.datasets[0].data = [P, interest];
         singleChart.update();
       }
     }
-
-    // --- STREAMING_CHUNK:Executing Tab 2 evaluation logic ---
-    function calculateEvaluation() {
-      const A = parseNumber(document.getElementById('cur-amount').value);
-      const curTerm = parseInt(document.getElementById('cur-term').value) || 0;
-      const curTermUnit = document.getElementById('cur-term-unit').value;
-      const B = parseRateInput(document.getElementById('cur-rate').value); // Lãi cũ
-      const demandRate = parseRateInput(document.getElementById('cur-demand-rate').value); // Lãi không kỳ hạn
-
-      const newTerm = parseInt(document.getElementById('new-term').value) || 0;
-      const newTermUnit = document.getElementById('new-term-unit').value;
-      const newRate = parseRateInput(document.getElementById('new-rate').value); // Lãi mới
-
-      if (!fpCurStart || !fpWithdraw) return;
-      const dStart = fpCurStart.selectedDates[0];
-      const dRut = fpWithdraw.selectedDates[0];
-
-      if (!dStart || !dRut) return;
-
-      // 1. Số ngày D đã gửi sổ cũ đến ngày rút
-      const D = getDaysDiff(dStart, dRut);
-      const holdingInfo = document.getElementById('holding-days-info');
-
-      if (D < 0) {
-        holdingInfo.innerHTML = `<span class="text-rose-600 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Ngày rút không được trước ngày gửi!</span>`;
-        return;
-      }
-      holdingInfo.innerHTML = `<i class="fa-solid fa-clock"></i> <span>Sổ cũ đã gửi được: <b>${D} ngày</b></span>`;
-
-      // 2. Tính toán ngày đáo hạn và số ngày tổng của Sổ cũ
-      const maturityOld = addTermToDate(dStart, curTerm, curTermUnit);
-      const totalDaysOld = Math.max(1, getDaysDiff(dStart, maturityOld));
-
-      // 3. Tính toán ngày đáo hạn và số ngày tổng của Gói mới (kỳ hạn E)
-      const maturityNew = addTermToDate(dRut, newTerm, newTermUnit);
-      const E = Math.max(1, getDaysDiff(dRut, maturityNew));
-
-      document.getElementById('new-total-days-info').textContent = `${E} ngày`;
-      document.getElementById('new-maturity-date-info').textContent = formatDateDDMMYYYY(maturityNew);
-
-      // --- ÁP DỤNG CÁC CÔNG THỨC TOÁN HỌC ---
-      // (1) Lãi kỳ vọng đến ngày rút: Lãi_kỳ_vọng = (A * B * D) / 365
-      const laiKyVong = (A * (B / 100) * D) / 365;
-
-      // (2) Lãi không kỳ hạn thực tế: Lãi_kkh = (A * demandRate * D) / 365
-      const laiKKH = (A * (demandRate / 100) * D) / 365;
-
-      // (3) THIỆT HẠI RÚT NON (LÃI BỊ MẤT TRẮNG) = Lãi_kỳ_vọng - Lãi_kkh
-      const thietHaiRutNon = Math.max(0, laiKyVong - laiKKH);
-
-      // (4) Tiền lãi trọn kỳ hạn gói mới: Lãi_mới = (A * newRate * E) / 365
-      const laiGoiMoi = (A * (newRate / 100) * E) / 365;
-
-      // (5) Thặng dư ròng sau khi bù lỗ = Lãi_mới - Thiệt_hại_rút_non
-      const thangDuBuLo = laiGoiMoi - thietHaiRutNon;
-
-      // (6) Tổng lãi nếu giữ nguyên sổ cũ đến ngày đáo hạn ban đầu
-      const laiGiuNguyen = (A * (B / 100) * totalDaysOld) / 365;
-
-      // (7) Tổng tiền thu khi rút đổi gói = Lãi_kkh + Lãi_mới
-      const tongThuKhiRut = laiKKH + laiGoiMoi;
-
-      // (8) Chênh lệch ròng so với giữ nguyên
-      const netDifference = tongThuKhiRut - laiGiuNguyen;
-
-      // --- CẬP NHẬT CÁC THẺ GIAO DIỆN CỘT 3 ---
-      document.getElementById('eval-lost-amount').textContent = formatVND(thietHaiRutNon);
-      document.getElementById('eval-lost-days').textContent = D;
-      document.getElementById('eval-new-raw-interest').textContent = formatVND(laiGoiMoi);
-      document.getElementById('eval-net-surplus').textContent = (thangDuBuLo >= 0 ? "+" : "") + formatVND(thangDuBuLo);
-
-      const decisionBox = document.getElementById('eval-decision-box');
-      const decisionBadge = document.getElementById('eval-decision-badge');
-      const diffAmountElem = document.getElementById('eval-diff-amount');
-      const summaryElem = document.getElementById('eval-decision-summary');
-
-      // Đánh giá 3 trạng thái
-      if (thangDuBuLo < 0) {
-        // Gói mới thậm chí KHÔNG BÙ NỔI khoản thiệt hại D ngày đã gửi
-        decisionBox.className = "p-4 rounded-2xl border-2 border-rose-500 bg-rose-50 text-center transition-all shadow-sm";
-        decisionBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1.5 bg-rose-600 text-white";
-        decisionBadge.textContent = "KHÔNG NÊN RÚT - LỖ NẶNG";
-        diffAmountElem.className = "text-2xl sm:text-3xl font-black mb-1 text-rose-700";
-        diffAmountElem.textContent = "-" + formatVND(Math.abs(thangDuBuLo));
-        summaryElem.className = "text-xs font-semibold text-rose-800";
-        summaryElem.textContent = `Lãi của gói mới (${formatVND(laiGoiMoi)}) thậm chí không bù nổi số tiền ${formatVND(thietHaiRutNon)} vừa bị phạt mất do đã giữ ${D} ngày qua!`;
-      } else if (netDifference > 0) {
-        // Gói mới bù đắp tốt và mang lại tổng tiền cao hơn hẳn giữ sổ cũ
-        decisionBox.className = "p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-center transition-all shadow-sm";
-        decisionBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1.5 bg-emerald-600 text-white";
-        decisionBadge.textContent = "NÊN RÚT ĐỔI SỔ - CÓ LỜI RÒNG";
-        diffAmountElem.className = "text-2xl sm:text-3xl font-black mb-1 text-emerald-700";
-        diffAmountElem.textContent = "+" + formatVND(netDifference);
-        summaryElem.className = "text-xs font-semibold text-emerald-800";
-        summaryElem.textContent = `Gói mới bù đắp hoàn toàn khoản thiệt hại ${formatVND(thietHaiRutNon)} và đem về thêm ${formatVND(netDifference)} tiền lời so với giữ sổ cũ.`;
-      } else {
-        // Có dôi dư nhẹ nhưng tổng thu nhập thấp hơn việc kiên nhẫn giữ sổ cũ đến hạn
-        decisionBox.className = "p-4 rounded-2xl border-2 border-amber-400 bg-amber-50 text-center transition-all shadow-sm";
-        decisionBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1.5 bg-amber-500 text-white";
-        decisionBadge.textContent = "CÂN NHẮC - GIỮ TIẾP CÓ LỢI HƠN";
-        diffAmountElem.className = "text-2xl sm:text-3xl font-black mb-1 text-amber-800";
-        diffAmountElem.textContent = formatVND(netDifference);
-        summaryElem.className = "text-xs font-semibold text-amber-900";
-        summaryElem.textContent = `Gói mới có bù được thiệt hại rút non nhưng việc tiếp tục giữ sổ cũ đến khi đáo hạn vẫn mang lại tổng tiền lãi cao hơn ${formatVND(Math.abs(netDifference))}.`;
-      }
-
-      // --- CẬP NHẬT DỮ LIỆU BẢNG 4 BƯỚC CHI TIẾT ---
-      document.getElementById('step-1-val').textContent = `- ${formatVND(thietHaiRutNon)}`;
-      document.getElementById('step-2-val').textContent = `+ ${formatVND(laiGoiMoi)}`;
-      document.getElementById('step-3-val').textContent = `${thangDuBuLo >= 0 ? '+' : ''}${formatVND(thangDuBuLo)}`;
-      document.getElementById('step-4-val').textContent = formatVND(laiGiuNguyen);
-
-      const netElem = document.getElementById('step-net-diff');
-      if (netDifference > 0) {
-        netElem.className = "py-3.5 px-4 text-right font-black text-base sm:text-lg text-emerald-700";
-        netElem.textContent = `+ ${formatVND(netDifference)} (CÓ LỜI)`;
-      } else if (netDifference < 0) {
-        netElem.className = "py-3.5 px-4 text-right font-black text-base sm:text-lg text-rose-700";
-        netElem.textContent = `- ${formatVND(Math.abs(netDifference))} (BỊ LỖ)`;
-      } else {
-        netElem.className = "py-3.5 px-4 text-right font-black text-base sm:text-lg text-slate-700";
-        netElem.textContent = "0 ₫ (Hòa vốn)";
-      }
-    }
-
-    // --- Initial Startup on Page Load ---
-    window.addEventListener('DOMContentLoaded', () => {
-      initPickers();
-      initChart();
-      calculateSingle();
-      calculateEvaluation();
-    });
   </script>
 </body>
 </html>
