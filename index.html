@@ -3,19 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrietPhg Tools - Thẩm Định Hoán Đổi Sổ Tiết Kiệm</title>
-  
-  <!-- Tailwind CSS -->
+  <title>TrietPhg Tools Portal - Công Cụ Tài Chính & Tiết Kiệm</title>
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Flatpickr (dd/mm/yyyy) -->
+
+  <!-- Flatpickr CDN (dd/mm/yyyy tiếng Việt) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
-  <!-- Chart.js -->
+
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Font Awesome -->
+
+  <!-- Font Awesome 6 CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Google Font Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -24,281 +31,470 @@
       -webkit-appearance: none;
       margin: 0;
     }
+    /* Smooth drawer animation */
+    .drawer-overlay {
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .drawer-content {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-100 selection:text-indigo-900">
 
-  <!-- Header -->
-  <header class="bg-slate-900 text-white shadow-sm border-b border-slate-800 sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-lg font-bold shadow">
-          <i class="fa-solid fa-scale-balanced"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="font-black text-lg tracking-tight">TrietPhg</span>
-            <span class="text-xs bg-indigo-900 text-indigo-300 px-2 py-0.5 rounded font-mono border border-indigo-700">/tools</span>
+  <!-- ==========================================================================
+       [HTML SECTION 1] TOP NAVIGATION HEADER
+       ========================================================================== -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 border-b border-slate-800 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      
+      <!-- Left: Hamburger Button & Brand Identity -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <button id="btn-open-drawer" onclick="toggleDrawer(true)" 
+                class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition border border-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                title="Mở danh bạ công cụ">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-indigo-600/30">
+            <i class="fa-solid fa-toolbox"></i>
           </div>
-          <p class="text-xs text-slate-400">Công cụ tính lãi & Thẩm định chi phí cơ hội chuyển sổ tiết kiệm</p>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-base tracking-tight text-white">TrietPhg</span>
+              <span class="text-[11px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded border border-indigo-500/30 font-mono">/tools</span>
+            </div>
+            <p class="text-xs text-slate-400 hidden sm:block">Trung tâm công cụ tài chính & tính toán cá nhân</p>
+          </div>
         </div>
       </div>
-      <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 text-slate-300 font-medium">
-        Quy chuẩn TT 14/2017/TT-NHNN (365 ngày)
+
+      <!-- Right: Active Tool Badge & Standards Info -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="hidden md:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 text-xs font-semibold">
+          <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
+          <span>Quy chuẩn 365 ngày (TT 14/2017/TT-NHNN)</span>
+        </div>
+
+        <button onclick="toggleDrawer(true)" 
+                class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span class="hidden sm:inline">Khám phá công cụ</span>
+        </button>
       </div>
+
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
-    <!-- Tabs Switcher -->
-    <div class="flex border-b border-slate-200 mb-6 space-x-3">
-      <button id="tab-btn-compare" onclick="switchTab('compare')" class="py-3 px-5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 transition-all">
-        <i class="fa-solid fa-scale-balanced"></i>
-        <span>Thẩm Định Hoán Đổi Sổ Tiết Kiệm (Trade-Off Matrix)</span>
-      </button>
-      <button id="tab-btn-single" onclick="switchTab('single')" class="py-3 px-5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 transition-all">
-        <i class="fa-solid fa-coins"></i>
-        <span>Tính Lãi Tiết Kiệm Đơn Lẻ</span>
-      </button>
-    </div>
+  <!-- ==========================================================================
+       [HTML SECTION 2] SIDEBAR HAMBURGER DRAWER (SLIDE-OVER MENU)
+       ========================================================================== -->
+  <div id="drawer-container" class="fixed inset-0 z-50 pointer-events-none transition-all duration-300" aria-hidden="true">
+    <!-- Backdrop Overlay -->
+    <div id="drawer-backdrop" onclick="toggleDrawer(false)" 
+         class="drawer-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none"></div>
 
-    <!-- TAB: THẨM ĐỊNH HOÁN ĐỔI DANH MỤC (TAB CHÍNH) -->
-    <section id="tab-compare" class="block space-y-6">
-      <!-- Nguyên lý giải thích chuẩn chi phí cơ hội -->
-      <div class="bg-indigo-50/80 border border-indigo-200 p-4 rounded-2xl text-xs text-indigo-950 flex items-start gap-3">
-        <i class="fa-solid fa-circle-info text-indigo-600 text-base mt-0.5"></i>
-        <div class="leading-relaxed">
-          <span class="font-bold">Mô hình cân đối chi phí cơ hội (Opportunity Cost & Trade-off):</span>
-          <br>• <b>Cái được thêm ($\Delta_{\text{Thặng dư}}$)</b>: Phần tiền lãi dôi dư mà Gói B mang lại thêm so với Gói A trong suốt kỳ hạn mới nhờ mức chênh lệch lãi suất.
-          <br>• <b>Cái giá phải trả ($\text{Chi phí chìm } d \text{ ngày}$)</b>: Số tiền lãi tích lũy của Gói A đáng lẽ được hưởng nhưng bị xóa sạch về 0 do rút non.
-          <br>• <b>Điều kiện chuyển gói có lợi</b>: $\Delta_{\text{Net}} = \Delta_{\text{Thặng dư}} - \text{Chi phí chìm} > 0$. Nếu ra số âm, phần tăng thêm của lãi suất mới không bù nổi công sức ngâm vốn, <b>tuyệt đối không nên chuyển</b>.
+    <!-- Off-canvas Content Panel -->
+    <aside id="drawer-panel" 
+           class="drawer-content absolute inset-y-0 left-0 max-w-xs sm:max-w-sm w-full bg-white shadow-2xl flex flex-col -translate-x-full pointer-events-auto border-r border-slate-200">
+      
+      <!-- Drawer Header -->
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-sm">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div>
+            <h2 class="font-bold text-sm leading-tight text-white">Danh Mục Công Cụ</h2>
+            <p class="text-[11px] text-slate-400">Sắp xếp bảng chữ cái (A - Z)</p>
+          </div>
+        </div>
+        <button onclick="toggleDrawer(false)" class="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <!-- Live Search Box -->
+      <div class="p-3.5 border-b border-slate-100 bg-slate-50/80">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+          <input type="text" id="tool-search-input" oninput="filterTools()" placeholder="Tìm kiếm tên công cụ, từ khóa..." 
+                 class="w-full pl-8 pr-8 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+          <button id="btn-clear-search" onclick="clearSearch()" class="absolute right-2.5 top-2.5 text-slate-300 hover:text-slate-600 hidden text-xs">
+            <i class="fa-solid fa-circle-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Alphabetical Tools List Container (populated by JS) -->
+      <div id="tools-list-container" class="flex-1 overflow-y-auto p-3.5 space-y-4 scrollbar-thin">
+        <!-- Dynamic injected content -->
+      </div>
+
+      <!-- Drawer Footer -->
+      <div class="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-400">
+        TrietPhg Tools Portal • Sẵn sàng mở rộng module
+      </div>
+    </aside>
+  </div>
+
+  <!-- ==========================================================================
+       [HTML SECTION 3] BREADCRUMB & ACTIVE TOOL INFO BAR
+       ========================================================================== -->
+  <div class="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 text-xs text-slate-500 font-medium overflow-x-auto whitespace-nowrap">
+        <span class="hover:text-indigo-600 cursor-pointer" onclick="toggleDrawer(true)">
+          <i class="fa-solid fa-house mr-1"></i>Portal
+        </span>
+        <span class="text-slate-300">/</span>
+        <span id="active-tool-category" class="text-slate-500 font-semibold">Tài Chính & Ngân Hàng</span>
+        <span class="text-slate-300">/</span>
+        <span id="active-tool-crumb" class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+          Thẩm Định Hoán Đổi Sổ Tiết Kiệm
+        </span>
+      </div>
+
+      <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+        <span>Hệ thống tính toán thời gian thực</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Viewport -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full">
+
+    <!-- ==========================================================================
+         [HTML SECTION 4] TOOL MODULE 1: THẨM ĐỊNH HOÁN ĐỔI SỔ TIẾT KIỆM (TRADE-OFF MATRIX)
+         ID: tool-view-early-withdraw
+         ========================================================================== -->
+    <article id="tool-view-early-withdraw" class="tool-view-container block space-y-6">
+      
+      <!-- Module Header Info -->
+      <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-5 rounded-2xl shadow-sm border border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 uppercase tracking-wide">Mô Hình Toán Học</span>
+              <span class="text-xs text-slate-400">| Phân tích chi phí cơ hội chìm</span>
+            </div>
+            <h2 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">Thẩm Định Quyết Định Hoán Đổi Sổ Tiết Kiệm (Trade-Off Matrix)</h2>
+            <p class="text-xs text-slate-300 max-w-3xl leading-relaxed">
+              Cân đối giữa <b>Cái được thêm</b> (thặng dư lãi suất mới trong suốt kỳ hạn mới) và <b>Cái giá phải trả</b> (toàn bộ tiền lãi của những ngày đã gửi bị mất trắng về 0 khi rút non). Chỉ chuyển khi $\Delta_{\text{Net}} > 0$.
+            </p>
+          </div>
+          <button onclick="resetTradeoffDefaults()" class="self-start md:self-auto text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl border border-slate-700 transition flex items-center gap-1.5 shrink-0">
+            <i class="fa-solid fa-rotate-left"></i> Đặt lại ví dụ chuẩn
+          </button>
+        </div>
+      </div>
+
+      <!-- Main 3-Column Calculator Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- CỘT 1: SỔ CŨ (GÓI A) -->
+        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold">A</span>
+                Sổ Cũ Hiện Tại (Gói A)
+              </h3>
+              <span class="text-[11px] font-semibold text-slate-400">Đang hoạt động</span>
+            </div>
+
+            <div class="space-y-3.5">
+              <!-- Tiền gốc P -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Số tiền gốc gửi (P - VND)</label>
+                <div class="relative">
+                  <input type="text" id="trade-amount" value="10,000,000" oninput="formatCurrencyInput(this); runTradeoffEvaluation();" 
+                         class="w-full pl-3 pr-12 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                  <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">VND</span>
+                </div>
+                <!-- Nút cộng trừ tiền nhanh -->
+                <div class="flex flex-wrap gap-1 mt-1.5 text-[11px]">
+                  <button onclick="modifyAmount('trade-amount', -50000000); runTradeoffEvaluation();" class="px-1.5 py-0.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded text-slate-600 border border-slate-200 font-medium transition">-50Tr</button>
+                  <button onclick="modifyAmount('trade-amount', -10000000); runTradeoffEvaluation();" class="px-1.5 py-0.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded text-slate-600 border border-slate-200 font-medium transition">-10Tr</button>
+                  <button onclick="modifyAmount('trade-amount', 10000000); runTradeoffEvaluation();" class="px-1.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded text-slate-600 border border-slate-200 font-medium transition">+10Tr</button>
+                  <button onclick="modifyAmount('trade-amount', 50000000); runTradeoffEvaluation();" class="px-1.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded text-slate-600 border border-slate-200 font-medium transition">+50Tr</button>
+                </div>
+              </div>
+
+              <!-- Ngày bắt đầu gửi Gói A (dd/mm/yyyy) -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">
+                  Ngày gửi Gói A <span class="text-slate-400 font-normal lowercase">(dd/mm/yyyy)</span>
+                </label>
+                <div class="relative flex">
+                  <input type="text" id="trade-start-date" placeholder="dd/mm/yyyy" 
+                         oninput="handleManualDateInput(this, fpTradeStart, runTradeoffEvaluation);" 
+                         class="w-full pl-3 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
+                  <button type="button" onclick="fpTradeStart.open()" class="absolute right-2.5 top-2 text-slate-400 hover:text-indigo-600 p-1">
+                    <i class="fa-regular fa-calendar text-sm"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Lãi suất Gói A rA -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất Gói A ($r_A$ - %/năm)</label>
+                <div class="relative">
+                  <input type="text" id="trade-rate-a" value="8,4" oninput="runTradeoffEvaluation();" 
+                         class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                  <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">Hỗ trợ gõ cả dấu phẩy (8,4) và dấu chấm (8.4).</p>
+              </div>
+
+              <!-- Lãi suất không kỳ hạn -->
+              <div class="pt-2 border-t border-slate-100">
+                <div class="flex justify-between items-center mb-1">
+                  <label class="text-xs font-bold text-slate-600">Lãi không kỳ hạn khi rút</label>
+                  <button type="button" onclick="setZeroDemandRate(); runTradeoffEvaluation();" class="text-[11px] text-rose-600 font-bold hover:underline">
+                    Mất sạch (0%)
+                  </button>
+                </div>
+                <div class="relative">
+                  <input type="text" id="trade-demand-rate" value="0" oninput="runTradeoffEvaluation();" 
+                         class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-700 outline-none">
+                  <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 text-[11px] text-slate-500">
+            <i class="fa-solid fa-info-circle text-indigo-500 mr-1"></i> Nếu rút non, toàn bộ lãi tích lũy được tính theo mức không kỳ hạn này.
+          </div>
+        </div>
+
+        <!-- CỘT 2: KẾ HOẠCH RÚT & GÓI MỚI (GÓI B) -->
+        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+              <h3 class="font-bold text-indigo-900 text-sm flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">B</span>
+                Rút Non & Gửi Sổ Mới (Gói B)
+              </h3>
+              <span class="text-[11px] font-bold text-indigo-600">Hoán đổi danh mục</span>
+            </div>
+
+            <div class="space-y-3.5">
+              <!-- Ngày quyết định rút non -->
+              <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-100">
+                <label class="block text-xs font-bold text-indigo-950 mb-1">
+                  Ngày quyết định rút non <span class="text-indigo-400 font-normal lowercase">(dd/mm/yyyy)</span>
+                </label>
+                <div class="relative flex">
+                  <input type="text" id="trade-withdraw-date" placeholder="dd/mm/yyyy" 
+                         oninput="handleManualDateInput(this, fpTradeWithdraw, runTradeoffEvaluation);" 
+                         class="w-full pl-3 pr-10 py-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-indigo-900 outline-none focus:ring-2 focus:ring-indigo-500">
+                  <button type="button" onclick="fpTradeWithdraw.open()" class="absolute right-2.5 top-2 text-indigo-400 hover:text-indigo-600 p-1">
+                    <i class="fa-regular fa-calendar text-sm"></i>
+                  </button>
+                </div>
+                
+                <!-- Huy hiệu đếm số ngày đã ngâm vốn -->
+                <div class="mt-2.5 pt-2 border-t border-indigo-200/60 flex items-center justify-between text-xs font-bold text-indigo-900">
+                  <span>Số ngày đã ngâm vốn ($d$):</span>
+                  <span id="trade-d-days-display" class="bg-white px-2 py-0.5 rounded border border-indigo-200 text-indigo-700 font-mono">26 ngày</span>
+                </div>
+              </div>
+
+              <!-- Kỳ hạn gửi Gói B (N ngày) -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Kỳ hạn gửi Gói B ($N$)</label>
+                <div class="grid grid-cols-5 gap-2">
+                  <input type="number" id="trade-term-b" value="6" min="1" oninput="runTradeoffEvaluation();" 
+                         class="col-span-3 px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-center outline-none">
+                  <select id="trade-term-unit-b" onchange="runTradeoffEvaluation();" 
+                          class="col-span-2 px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
+                    <option value="month" selected>Tháng</option>
+                    <option value="day">Ngày</option>
+                    <option value="year">Năm</option>
+                  </select>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
+                  <span>Quy đổi số ngày ($N$):</span>
+                  <span id="trade-n-days-display" class="font-bold text-slate-700 font-mono">180 ngày</span>
+                </div>
+              </div>
+
+              <!-- Lãi suất Gói B rB -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất Gói B ($r_B$ - %/năm)</label>
+                <div class="relative">
+                  <input type="text" id="trade-rate-b" value="8,86" oninput="runTradeoffEvaluation();" 
+                         class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-indigo-700 outline-none focus:ring-2 focus:ring-indigo-500">
+                  <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+                </div>
+                <div class="text-[11px] font-bold mt-1" id="trade-rate-diff-badge">
+                  Chênh lệch: +0.46%/năm
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 text-[11px] text-slate-500">
+            <i class="fa-solid fa-chart-simple text-indigo-500 mr-1"></i> Gói B bắt đầu sinh lời từ chính ngày tất toán Gói A.
+          </div>
+        </div>
+
+        <!-- CỘT 3: KẾT QUẢ THẨM ĐỊNH CHI PHÍ CƠ HỘI CHUẨN XÁC -->
+        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-gavel text-indigo-600"></i>
+                Kết Luận Thẩm Định Ròng
+              </h3>
+              <span class="text-[11px] font-extrabold text-slate-400 uppercase">Trade-off Net</span>
+            </div>
+
+            <!-- Khối kết luận lớn trực quan -->
+            <div id="trade-decision-card" class="p-4 rounded-2xl border-2 text-center transition-all mb-4 shadow-sm">
+              <div id="trade-decision-badge" class="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
+                ĐANG PHÂN TÍCH
+              </div>
+              <div id="trade-net-amount" class="text-2xl sm:text-3xl font-black mb-1">0 ₫</div>
+              <p id="trade-detail-summary" class="text-xs font-semibold leading-relaxed">--</p>
+            </div>
+
+            <!-- Bóc tách chi tiết 3 bước theo đúng mô hình -->
+            <div class="space-y-2.5 text-xs">
+              
+              <!-- Bước 1: Chi phí chìm bị phạt mất -->
+              <div class="bg-rose-50/80 border border-rose-200 p-3 rounded-xl">
+                <div class="flex justify-between items-center font-bold text-rose-950">
+                  <span>1. Lãi Gói A bị mất (<span id="box-d-days">26</span> ngày):</span>
+                  <span id="box-lost-amount" class="font-mono text-rose-600 text-sm font-black">-0 ₫</span>
+                </div>
+                <div class="text-[10px] text-rose-700/80 mt-0.5">Khoản tiền công tích lũy bị ngân hàng xóa sạch khi rút non</div>
+              </div>
+
+              <!-- Bước 2: Thặng dư mới mang lại thêm -->
+              <div class="bg-emerald-50/80 border border-emerald-200 p-3 rounded-xl">
+                <div class="flex justify-between items-center font-bold text-emerald-950">
+                  <span>2. Lãi Gói B mang lại thêm:</span>
+                  <span id="box-gain-extra" class="font-mono text-emerald-600 text-sm font-black">+0 ₫</span>
+                </div>
+                <div class="text-[10px] text-emerald-700/80 mt-0.5">
+                  Lãi B (<span id="box-gain-b">0₫</span>) trừ Lãi A chuẩn (<span id="box-gain-a">0₫</span>) trong $N$ ngày
+                </div>
+              </div>
+
+              <!-- Bước 3: Đối chiếu tỷ lệ kinh tế (Trade-off Matrix) -->
+              <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl space-y-1.5 text-[11px]">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Tỷ lệ tăng lãi suất ($\Delta r / r_A$):</span>
+                  <span id="box-ratio-rate" class="font-bold text-slate-800 font-mono">+0.00%</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Tỷ lệ thời gian đã gửi ($d / N$):</span>
+                  <span id="box-ratio-time" class="font-bold text-slate-800 font-mono">0.00%</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[10px] text-slate-400 text-center">
+            Công thức: $\Delta_{\text{Net}} = \Delta_{\text{Thặng dư}} - \text{Chi phí chìm}$.
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+    <!-- ==========================================================================
+         [HTML SECTION 5] TOOL MODULE 2: TÍNH LÃI SUẤT TIẾT KIỆM ĐƠN LẺ
+         ID: tool-view-single-calc
+         ========================================================================== -->
+    <article id="tool-view-single-calc" class="tool-view-container hidden space-y-6">
+      
+      <!-- Module Header Info -->
+      <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-sm border border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wide">Quy Chuẩn TT 14/2017</span>
+            </div>
+            <h2 class="text-lg sm:text-xl font-extrabold tracking-tight text-white mt-1">Tính Lãi Suất Tiết Kiệm Đơn Lẻ</h2>
+            <p class="text-xs text-slate-300">Tính chính xác số tiền lãi, ngày đáo hạn theo lịch thực tế, hỗ trợ các hình thức trả lãi cuối kỳ, hàng tháng và đầu kỳ.</p>
+          </div>
+          <button onclick="resetSingleCalcDefaults()" class="self-start sm:self-auto text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl border border-slate-700 transition flex items-center gap-1.5 shrink-0">
+            <i class="fa-solid fa-rotate-left"></i> Đặt lại
+          </button>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- CỘT 1: GÓI A HIỆN TẠI -->
-        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
-            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold">A</span>
-              Sổ Cũ Đang Gửi (Gói A)
-            </h3>
-            <span class="text-[11px] font-semibold text-slate-400">Đang chạy</span>
-          </div>
+        <!-- Input Form -->
+        <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span class="w-2 h-4 bg-indigo-600 rounded"></span> Thông số khoản tiền gửi
+          </h3>
 
-          <div class="space-y-3.5">
-            <!-- Tiền gốc P -->
+          <div class="space-y-4">
+            <!-- Vốn gửi -->
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Số tiền gốc gửi (P)</label>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Số tiền gốc gửi (VND)</label>
               <div class="relative">
-                <input type="text" id="cur-amount" value="10,000,000" oninput="formatCurrencyInput(this); calculateOpportunityTradeoff();" class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">VND</span>
+                <input type="text" id="single-amount" value="100,000,000" oninput="formatCurrencyInput(this); runSingleCalculation();" 
+                       class="w-full pl-3.5 pr-14 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-base font-bold text-slate-900 outline-none transition">
+                <span class="absolute right-3.5 top-3 text-xs font-extrabold text-slate-400 bg-slate-200/80 px-1.5 py-0.5 rounded">VNĐ</span>
               </div>
-              <!-- Nút cộng trừ tiền nhanh -->
-              <div class="flex flex-wrap gap-1 mt-1.5 text-[11px]">
-                <button onclick="modifyAmount('cur-amount', -50000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded text-slate-600 border border-slate-200 font-medium">-50Tr</button>
-                <button onclick="modifyAmount('cur-amount', -10000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded text-slate-600 border border-slate-200 font-medium">-10Tr</button>
-                <button onclick="modifyAmount('cur-amount', 10000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded text-slate-600 border border-slate-200 font-medium">+10Tr</button>
-                <button onclick="modifyAmount('cur-amount', 50000000)" class="px-1.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 rounded text-slate-600 border border-slate-200 font-medium">+50Tr</button>
+              
+              <!-- Quick adjust buttons -->
+              <div class="flex flex-wrap gap-1.5 mt-2.5 text-xs">
+                <button onclick="modifyAmount('single-amount', -50000000); runSingleCalculation();" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-600 font-medium border border-slate-200 transition">-50 Tr</button>
+                <button onclick="modifyAmount('single-amount', -10000000); runSingleCalculation();" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-600 font-medium border border-slate-200 transition">-10 Tr</button>
+                <button onclick="modifyAmount('single-amount', 10000000); runSingleCalculation();" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 font-medium border border-slate-200 transition">+10 Tr</button>
+                <button onclick="modifyAmount('single-amount', 50000000); runSingleCalculation();" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 font-medium border border-slate-200 transition">+50 Tr</button>
+                <button onclick="modifyAmount('single-amount', 100000000); runSingleCalculation();" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 font-medium border border-slate-200 transition">+100 Tr</button>
               </div>
             </div>
 
             <!-- Ngày bắt đầu gửi -->
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Ngày bắt đầu gửi Gói A</label>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Ngày bắt đầu gửi <span class="text-slate-400 font-normal lowercase">(gõ tay dd/mm/yyyy hoặc chọn lịch)</span>
+              </label>
               <div class="relative flex">
-                <input type="text" id="cur-start-date" placeholder="dd/mm/yyyy" oninput="handleManualDateInput(this, curDatePicker, calculateOpportunityTradeoff);" class="w-full pl-3 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 outline-none">
-                <button type="button" onclick="curDatePicker.open()" class="absolute right-2.5 top-2 text-slate-400 hover:text-indigo-600">
-                  <i class="fa-regular fa-calendar text-sm"></i>
+                <input type="text" id="single-start-date" placeholder="dd/mm/yyyy" 
+                       oninput="handleManualDateInput(this, fpSingleStart, runSingleCalculation);" 
+                       class="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-slate-800 outline-none transition">
+                <button type="button" onclick="fpSingleStart.open()" class="absolute right-3 top-2.5 text-slate-400 hover:text-indigo-600 p-1">
+                  <i class="fa-regular fa-calendar-days text-base"></i>
                 </button>
               </div>
             </div>
 
-            <!-- Lãi suất Gói A -->
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất Gói A ($r_A$ - %/năm)</label>
-              <div class="relative">
-                <input type="text" id="cur-rate" value="8,4" oninput="calculateOpportunityTradeoff();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+            <!-- Kỳ hạn -->
+            <div class="grid grid-cols-5 gap-2">
+              <div class="col-span-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Kỳ hạn gửi</label>
+                <input type="number" id="single-term" value="6" min="1" oninput="runSingleCalculation();" 
+                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center outline-none">
               </div>
-            </div>
-
-            <!-- Lãi suất không kỳ hạn -->
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <label class="text-xs font-bold text-slate-600">Lãi không kỳ hạn khi rút non</label>
-                <button type="button" onclick="setZeroDemandRate()" class="text-[11px] text-rose-600 font-bold hover:underline">Mất sạch (0%)</button>
-              </div>
-              <div class="relative">
-                <input type="text" id="cur-demand-rate" value="0" oninput="calculateOpportunityTradeoff();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-700 outline-none">
-                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
-              </div>
-              <p class="text-[10px] text-slate-400 mt-1">Hầu hết ngân hàng mặc định bằng 0% hoặc 0.1%/năm.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- CỘT 2: KẾ HOẠCH RÚT SỚM VÀ GÓI B -->
-        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
-            <h3 class="font-bold text-indigo-900 text-sm flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">B</span>
-              Rút Non & Gửi Sổ Mới (Gói B)
-            </h3>
-            <span class="text-[11px] font-bold text-indigo-600">Hoán đổi</span>
-          </div>
-
-          <div class="space-y-3.5">
-            <!-- Ngày quyết định rút non -->
-            <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
-              <label class="block text-xs font-bold text-indigo-950 mb-1">Ngày quyết định rút non</label>
-              <div class="relative flex">
-                <input type="text" id="withdraw-date" placeholder="dd/mm/yyyy" oninput="handleManualDateInput(this, withdrawDatePicker, calculateOpportunityTradeoff);" class="w-full pl-3 pr-10 py-2 bg-white border border-indigo-200 rounded-xl text-xs font-bold text-indigo-900 outline-none">
-                <button type="button" onclick="withdrawDatePicker.open()" class="absolute right-2.5 top-2 text-indigo-400 hover:text-indigo-600">
-                  <i class="fa-regular fa-calendar text-sm"></i>
-                </button>
-              </div>
-              <div id="holding-badge" class="mt-2 text-xs font-bold text-indigo-700">
-                Đã giữ vốn: <span id="holding-days-count">0</span> ngày
-              </div>
-            </div>
-
-            <!-- Kỳ hạn chuẩn của Gói B (N ngày) -->
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Kỳ hạn gửi Gói B (N)</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input type="number" id="new-term" value="6" min="1" oninput="calculateOpportunityTradeoff();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold outline-none">
-                <select id="new-term-unit" onchange="calculateOpportunityTradeoff();" class="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
-                  <option value="month" selected>Tháng</option>
-                  <option value="day">Ngày</option>
-                  <option value="year">Năm</option>
-                </select>
-              </div>
-              <div class="text-[11px] text-slate-400 mt-1">
-                Quy đổi chuẩn kỳ hạn: <span id="new-term-days-count" class="font-bold text-slate-600">180 ngày</span>
-              </div>
-            </div>
-
-            <!-- Lãi suất Gói B -->
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Lãi suất Gói B ($r_B$ - %/năm)</label>
-              <div class="relative">
-                <input type="text" id="new-rate" value="8,86" oninput="calculateOpportunityTradeoff();" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-indigo-700 outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
-              </div>
-              <div class="text-[11px] text-emerald-600 font-bold mt-1" id="rate-diff-indicator">
-                Chênh lệch: +0.46%/năm
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CỘT 3: KẾT QUẢ THẨM ĐỊNH CHI PHÍ CƠ HỘI -->
-        <div class="lg:col-span-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-          <div>
-            <div class="border-b border-slate-100 pb-3 mb-4">
-              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-indigo-600"></i>
-                Kết Luận Thẩm Định Ròng
-              </h3>
-            </div>
-
-            <!-- Khối kết luận lớn -->
-            <div id="decision-card" class="p-4 rounded-xl border text-center mb-4 transition-all">
-              <div id="decision-status" class="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
-                --
-              </div>
-              <div id="decision-net-amount" class="text-3xl font-black mb-1">0 ₫</div>
-              <p id="decision-detail-text" class="text-xs font-medium leading-relaxed">--</p>
-            </div>
-
-            <!-- Bảng phân rã 5 bước theo đúng mô hình -->
-            <div class="space-y-2 text-xs">
-              <!-- Bước 1: Chi phí chìm -->
-              <div class="bg-rose-50/70 border border-rose-100 p-2.5 rounded-xl">
-                <div class="flex justify-between font-bold text-rose-900">
-                  <span>1. Lãi Gói A bị mất sạch (<span id="res-d-days">26</span> ngày):</span>
-                  <span id="res-lost-interest" class="font-mono text-rose-600">0 ₫</span>
-                </div>
-                <div class="text-[10px] text-rose-500 mt-0.5">Cái giá phải trả ngay khi rút non để đổi sổ</div>
-              </div>
-
-              <!-- Bước 2: Thặng dư mới -->
-              <div class="bg-emerald-50/70 border border-emerald-100 p-2.5 rounded-xl">
-                <div class="flex justify-between font-bold text-emerald-900">
-                  <span>2. Phần lãi Gói B mang lại thêm:</span>
-                  <span id="res-extra-gain" class="font-mono text-emerald-600">0 ₫</span>
-                </div>
-                <div class="text-[10px] text-emerald-600 mt-0.5">Lãi Gói B (<span id="res-gain-b">0₫</span>) trừ Lãi Gói A chuẩn (<span id="res-gain-a">0₫</span>)</div>
-              </div>
-
-              <!-- Bước 3: So sánh tỷ lệ -->
-              <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl space-y-1 text-[11px]">
-                <div class="flex justify-between">
-                  <span class="text-slate-500">Tỷ lệ tăng lãi suất ($\Delta r / r_A$):</span>
-                  <span id="res-ratio-rate" class="font-bold text-slate-800 font-mono">0%</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-500">Tỷ lệ thời gian ngâm vốn ($d / N$):</span>
-                  <span id="res-ratio-time" class="font-bold text-slate-800 font-mono">0%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-4 pt-3 border-t border-slate-100 text-[10px] text-slate-400 italic">
-            * Công thức: ΔNet = (Lãi Gói B - Lãi Gói A) - Lãi mất trắng do rút non sau d ngày.
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- TAB: TÍNH LÃI ĐƠN LẺ -->
-    <section id="tab-single" class="hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-indigo-600"></i> Thông số khoản tiền gửi
-          </h2>
-
-          <div class="space-y-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Số tiền gốc gửi (VND)</label>
-              <div class="relative">
-                <input type="text" id="single-amount" value="100,000,000" oninput="formatCurrencyInput(this); calculateSingle();" class="w-full pl-3 pr-12 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-base font-bold text-slate-900 outline-none">
-                <span class="absolute right-3 top-2.5 text-xs font-bold text-slate-400">VND</span>
-              </div>
-              <div class="flex flex-wrap gap-1.5 mt-2 text-xs">
-                <button onclick="modifyAmount('single-amount', -50000000)" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">-50 Tr</button>
-                <button onclick="modifyAmount('single-amount', -10000000)" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">-10 Tr</button>
-                <button onclick="modifyAmount('single-amount', 10000000)" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">+10 Tr</button>
-                <button onclick="modifyAmount('single-amount', 50000000)" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">+50 Tr</button>
-                <button onclick="modifyAmount('single-amount', 100000000)" class="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-slate-600 transition font-medium border border-slate-200">+100 Tr</button>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Ngày bắt đầu gửi (dd/mm/yyyy)</label>
-              <div class="relative flex">
-                <input type="text" id="single-start-date" placeholder="dd/mm/yyyy" oninput="handleManualDateInput(this, singleDatePicker, calculateSingle);" class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
-                <button type="button" onclick="singleDatePicker.open()" class="absolute right-3 top-2.5 text-slate-400 hover:text-indigo-600">
-                  <i class="fa-regular fa-calendar text-base"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Kỳ hạn gửi</label>
-                <input type="number" id="single-term" value="6" min="1" oninput="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold outline-none">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Đơn vị kỳ hạn</label>
-                <select id="single-term-unit" onchange="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
+              <div class="col-span-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Đơn vị</label>
+                <select id="single-term-unit" onchange="runSingleCalculation();" 
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-semibold outline-none">
                   <option value="month" selected>Tháng</option>
                   <option value="day">Ngày</option>
                   <option value="year">Năm</option>
@@ -306,65 +502,89 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Mức lãi suất (%/năm)</label>
+            <!-- Lãi suất (%/năm) -->
+            <div class="grid grid-cols-5 gap-2">
+              <div class="col-span-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Lãi suất (vd: 5,8 hoặc 5.8)</label>
                 <div class="relative">
-                  <input type="text" id="single-rate" value="5,8" oninput="calculateSingle();" class="w-full pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold outline-none">
+                  <input type="text" id="single-rate" value="5,8" oninput="runSingleCalculation();" 
+                         class="w-full pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-center outline-none">
                   <span class="absolute right-3 top-2.5 text-xs font-bold text-slate-400">%</span>
                 </div>
               </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Hình thức nhận lãi</label>
-                <select id="single-method" onchange="calculateSingle();" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
-                  <option value="end">Cuối kỳ (Đáo hạn)</option>
-                  <option value="monthly">Định kỳ hàng tháng</option>
-                  <option value="beginning">Đầu kỳ (Trả trước)</option>
+              <div class="col-span-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Chu kỳ</label>
+                <select id="single-rate-unit" onchange="runSingleCalculation();" 
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-semibold outline-none">
+                  <option value="year" selected>%/Năm</option>
+                  <option value="month">%/Tháng</option>
+                  <option value="day">%/Ngày</option>
                 </select>
               </div>
+            </div>
+
+            <!-- Phương thức nhận lãi -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Phương thức nhận tiền lãi</label>
+              <select id="single-method" onchange="runSingleCalculation();" 
+                      class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 text-sm font-medium outline-none">
+                <option value="end">Lĩnh lãi cuối kỳ (Nhận trọn gói khi đáo hạn)</option>
+                <option value="monthly">Lĩnh lãi định kỳ hàng tháng</option>
+                <option value="beginning">Lĩnh lãi đầu kỳ (Nhận ngay lúc bắt đầu gửi)</option>
+              </select>
             </div>
           </div>
         </div>
 
+        <!-- Single Results Panel -->
         <div class="lg:col-span-6 flex flex-col gap-6">
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-1">
-            <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center justify-between">
-              <span><i class="fa-solid fa-receipt text-indigo-600"></i> Kết quả dự kiến</span>
-              <span id="single-maturity-badge" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-bold border border-indigo-100">
-                Đáo hạn: --/--/----
-              </span>
-            </h2>
-
-            <div class="grid grid-cols-2 gap-4 mb-6">
-              <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div class="text-xs text-slate-500 font-medium">Tổng tiền lãi nhận được</div>
-                <div id="single-res-interest" class="text-xl font-black text-emerald-600 mt-1">0 ₫</div>
-                <div id="single-res-detail" class="text-[11px] text-slate-400 mt-0.5">--</div>
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                  <i class="fa-solid fa-receipt text-indigo-600 mr-1.5"></i> Kết quả dự kiến
+                </h3>
+                <span id="single-maturity-badge" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-bold border border-indigo-100">
+                  Đáo hạn: --/--/----
+                </span>
               </div>
-              <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div class="text-xs text-slate-500 font-medium">Tổng gốc và lãi</div>
-                <div id="single-res-total" class="text-xl font-black text-slate-900 mt-1">0 ₫</div>
-                <div class="text-[11px] text-slate-400 mt-0.5">Vốn gốc: <span id="single-res-principal">0 ₫</span></div>
+
+              <div class="grid grid-cols-2 gap-4 mb-5">
+                <div class="bg-emerald-50/80 p-4 rounded-xl border border-emerald-200">
+                  <div class="text-xs text-emerald-800 font-bold uppercase tracking-wider">Tổng tiền lãi nhận được</div>
+                  <div id="single-res-interest" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1">0 ₫</div>
+                  <div id="single-res-detail" class="text-[11px] text-emerald-700 mt-0.5 font-medium">Lĩnh cuối kỳ</div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <div class="text-xs text-slate-500 font-bold uppercase tracking-wider">Tổng nhận về (Gốc + Lãi)</div>
+                  <div id="single-res-total" class="text-xl sm:text-2xl font-black text-slate-900 mt-1">0 ₫</div>
+                  <div class="text-[11px] text-slate-400 mt-0.5">Gốc: <span id="single-res-principal" class="font-semibold text-slate-600">0 ₫</span></div>
+                </div>
+              </div>
+
+              <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2 text-xs">
+                <div class="flex justify-between py-0.5">
+                  <span class="text-slate-500">Số ngày gửi thực tế theo lịch:</span>
+                  <span id="single-res-days" class="font-bold text-slate-800">0 ngày</span>
+                </div>
+                <div class="flex justify-between py-0.5">
+                  <span class="text-slate-500">Tiền lãi bình quân mỗi tháng:</span>
+                  <span id="single-res-per-month" class="font-bold text-indigo-600">0 ₫/tháng</span>
+                </div>
+                <div class="flex justify-between py-0.5">
+                  <span class="text-slate-500">Tiền lãi bình quân mỗi ngày:</span>
+                  <span id="single-res-per-day" class="font-bold text-indigo-600">0 ₫/ngày</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-t border-slate-200 pt-1.5">
+                  <span class="text-slate-500">Tỷ suất sinh lời thực tế:</span>
+                  <span id="single-res-yield" class="font-bold text-emerald-600">+0.00%</span>
+                </div>
               </div>
             </div>
 
-            <div class="border-t border-slate-100 pt-4 space-y-2 text-xs">
-              <div class="flex justify-between py-1">
-                <span class="text-slate-500">Số ngày thực gửi:</span>
-                <span id="single-res-days" class="font-bold text-slate-700">0 ngày</span>
-              </div>
-              <div class="flex justify-between py-1">
-                <span class="text-slate-500">Lãi bình quân mỗi tháng:</span>
-                <span id="single-res-per-month" class="font-bold text-indigo-600">0 ₫/tháng</span>
-              </div>
-              <div class="flex justify-between py-1">
-                <span class="text-slate-500">Lãi bình quân mỗi ngày:</span>
-                <span id="single-res-per-day" class="font-bold text-indigo-600">0 ₫/ngày</span>
-              </div>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-slate-100">
-              <div class="w-40 h-40 mx-auto">
+            <!-- Chart -->
+            <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-center">
+              <div class="w-36 h-36">
                 <canvas id="singleChart"></canvas>
               </div>
             </div>
@@ -372,54 +592,70 @@
         </div>
 
       </div>
-    </section>
+    </article>
 
   </main>
 
   <!-- Footer -->
-  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-    <p>© 2026 TrietPhg Tools • Thẩm định tài chính cá nhân chuẩn mực • trietphg.github.io/tools</p>
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2026 TrietPhg Tools Portal • Nền tảng công cụ mở rộng cá nhân • trietphg.github.io/tools</p>
+      <p class="text-slate-400 font-mono">Build v2.4 Modular Architecture</p>
+    </div>
   </footer>
 
-  <!-- SCRIPT LOGIC -->
   <script>
-    const formatVND = (num) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Math.round(num));
+    /* ==========================================================================
+       [SECTION 1] CORE UTILITIES & HELPERS
+       Các hàm dùng chung: định dạng tiền VND, parse số phẩy/chấm, xử lý ngày tháng
+       ========================================================================== */
+
+    // Định dạng tiền tệ VND chuẩn Việt Nam
+    const formatVND = (num) => {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Math.round(num));
+    };
+
+    // Parse chuỗi có dấu phân tách hàng nghìn (10,000,000 -> 10000000)
     const parseNumber = (str) => {
       if (!str) return 0;
       return parseFloat(str.toString().replace(/,/g, '')) || 0;
     };
+
+    // Hỗ trợ gõ lãi suất bằng cả dấu phẩy (8,4) và dấu chấm (8.4)
     const parseRateInput = (str) => {
       if (!str) return 0;
-      return parseFloat(str.toString().replace(/,/g, '.')) || 0;
+      let clean = str.toString().trim().replace(/,/g, '.');
+      return parseFloat(clean) || 0;
     };
-    const formatWithCommas = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Thêm dấu phẩy hàng nghìn khi gõ input tiền
+    const formatWithCommas = (num) => {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
 
     function formatCurrencyInput(input) {
       let val = input.value.replace(/\D/g, '');
       input.value = val ? formatWithCommas(val) : '';
     }
 
+    // Tăng giảm số tiền nhanh qua các nút (+10Tr, -10Tr,...)
     function modifyAmount(elementId, delta) {
       const input = document.getElementById(elementId);
-      let current = parseNumber(input.value);
-      let next = Math.max(0, current + delta);
+      let cur = parseNumber(input.value);
+      let next = Math.max(0, cur + delta);
       input.value = formatWithCommas(next);
-      if (elementId === 'single-amount') calculateSingle();
-      if (elementId === 'cur-amount') calculateOpportunityTradeoff();
     }
 
-    function setZeroDemandRate() {
-      document.getElementById('cur-demand-rate').value = '0';
-      calculateOpportunityTradeoff();
-    }
-
+    // Định dạng Date object sang chuỗi dd/mm/yyyy
     function formatDateVN(date) {
+      if (!date || isNaN(date.getTime())) return "";
       const d = String(date.getDate()).padStart(2, '0');
       const m = String(date.getMonth() + 1).padStart(2, '0');
       const y = date.getFullYear();
       return `${d}/${m}/${y}`;
     }
 
+    // Parse chuỗi dd/mm/yyyy hoặc ddmmyyyy thành Date object hợp lệ
     function parseDateVN(dateStr) {
       if (!dateStr) return null;
       const cleanStr = dateStr.replace(/\D/g, '');
@@ -441,6 +677,7 @@
       return null;
     }
 
+    // Xử lý tự động khi người dùng gõ tay ngày tháng
     function handleManualDateInput(inputElem, pickerInstance, callback) {
       let val = inputElem.value;
       let digits = val.replace(/\D/g, '');
@@ -450,22 +687,24 @@
         let parsed = parseDateVN(formatted);
         if (parsed && pickerInstance) {
           pickerInstance.setDate(parsed, false);
-          callback();
+          if (callback) callback();
         }
       } else {
         let parsed = parseDateVN(val);
         if (parsed && pickerInstance) {
           pickerInstance.setDate(parsed, false);
-          callback();
+          if (callback) callback();
         }
       }
     }
 
+    // Tính khoảng cách giữa 2 mốc thời gian (số ngày nguyên)
     function getDaysDiff(date1, date2) {
       const diffTime = date2.getTime() - date1.getTime();
-      return Math.max(0, Math.round(diffTime / (1000 * 60 * 60 * 24)));
+      return Math.round(diffTime / (1000 * 60 * 60 * 24));
     }
 
+    // Cộng thêm kỳ hạn vào ngày tháng
     function addTermToDate(startDate, term, unit) {
       const d = new Date(startDate.getTime());
       if (unit === 'day') {
@@ -478,166 +717,207 @@
       return d;
     }
 
-    function switchTab(tab) {
-      const tabCompare = document.getElementById('tab-compare');
-      const tabSingle = document.getElementById('tab-single');
-      const btnCompare = document.getElementById('tab-btn-compare');
-      const btnSingle = document.getElementById('tab-btn-single');
-
-      if (tab === 'compare') {
-        tabCompare.classList.remove('hidden');
-        tabSingle.classList.add('hidden');
-        btnCompare.className = "py-3 px-5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 transition-all";
-        btnSingle.className = "py-3 px-5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 transition-all";
-        calculateOpportunityTradeoff();
-      } else {
-        tabCompare.classList.add('hidden');
-        tabSingle.classList.remove('hidden');
-        btnSingle.className = "py-3 px-5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 transition-all";
-        btnCompare.className = "py-3 px-5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 transition-all";
-        calculateSingle();
+    /* ==========================================================================
+       [SECTION 2] TOOL REGISTRY (KHAI BÁO & QUẢN LÝ DANH BẠ CÔNG CỤ)
+       Khi bạn muốn thêm công cụ mới số 3, 4, 5... chỉ việc thêm 1 object vào đây!
+       ========================================================================== */
+    const TOOL_REGISTRY = [
+      {
+        id: "tool-view-early-withdraw",
+        name: "Thẩm Định Hoán Đổi Sổ Tiết Kiệm (Trade-Off)",
+        category: "Tài Chính & Ngân Hàng",
+        icon: "fa-scale-balanced",
+        badge: "Khuyên Dùng",
+        description: "Đánh giá chi phí cơ hội chìm, đối soát thặng dư Gói B và lãi mất trắng Gói A.",
+        keywords: ["tham dinh", "rut som", "chuyen so", "tradeoff", "lai suat", "chi phi co hoi"]
+      },
+      {
+        id: "tool-view-single-calc",
+        name: "Tính Lãi Suất Tiết Kiệm Đơn Lẻ",
+        category: "Tài Chính & Ngân Hàng",
+        icon: "fa-coins",
+        badge: "Chuẩn TT14",
+        description: "Tính lãi cuối kỳ, hàng tháng, đầu kỳ và biểu đồ phân bổ gốc lãi.",
+        keywords: ["tinh lai", "tiet kiem", "ngan hang", "dao han", "lai don"]
       }
-    }
+      // Bổ sung công cụ tiếp theo tại đây:
+      // {
+      //   id: "tool-view-inflation-calc",
+      //   name: "Dự Tính Lạm Phát & Mất Giá Tiền Tệ",
+      //   category: "Tài Chính & Đầu Tư",
+      //   icon: "fa-chart-pie",
+      //   badge: "Sắp Ra Mắt",
+      //   description: "Ước lượng sức mua của đồng tiền sau n năm.",
+      //   keywords: ["lam phat", "mat gia", "suc mua"]
+      // }
+    ];
 
-    // --- Flatpickr Global Instances ---
-    let curDatePicker, withdrawDatePicker, singleDatePicker;
+    let currentActiveToolId = "tool-view-early-withdraw";
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // Thiết lập ngày mặc định: gửi 26 ngày trước, hôm nay quyết định rút
+    /* ==========================================================================
+       [SECTION 3] TOOL 1: THẨM ĐỊNH HOÁN ĐỔI SỔ TIẾT KIỆM (TRADE-OFF MATRIX)
+       Triển khai logic toán học chi phí cơ hội chuẩn xác 100%
+       ========================================================================== */
+    let fpTradeStart, fpTradeWithdraw;
+
+    function initTradeoffPickers() {
+      // Mặc định: Gửi 26 ngày trước, hôm nay quyết định rút non
       const today = new Date();
       const twentySixDaysAgo = new Date();
       twentySixDaysAgo.setDate(twentySixDaysAgo.getDate() - 26);
 
-      curDatePicker = flatpickr("#cur-start-date", {
+      fpTradeStart = flatpickr("#trade-start-date", {
         dateFormat: "d/m/Y",
         defaultDate: twentySixDaysAgo,
         locale: "vn",
         allowInput: true,
-        onChange: () => calculateOpportunityTradeoff()
+        onChange: () => runTradeoffEvaluation()
       });
 
-      withdrawDatePicker = flatpickr("#withdraw-date", {
+      fpTradeWithdraw = flatpickr("#trade-withdraw-date", {
         dateFormat: "d/m/Y",
         defaultDate: today,
         locale: "vn",
         allowInput: true,
-        onChange: () => calculateOpportunityTradeoff()
+        onChange: () => runTradeoffEvaluation()
       });
+    }
 
-      singleDatePicker = flatpickr("#single-start-date", {
-        dateFormat: "d/m/Y",
-        defaultDate: today,
-        locale: "vn",
-        allowInput: true,
-        onChange: () => calculateSingle()
-      });
+    function setZeroDemandRate() {
+      document.getElementById('trade-demand-rate').value = "0";
+    }
 
-      initChart();
-      calculateOpportunityTradeoff();
-    });
+    function resetTradeoffDefaults() {
+      document.getElementById('trade-amount').value = "10,000,000";
+      document.getElementById('trade-rate-a').value = "8,4";
+      document.getElementById('trade-demand-rate').value = "0";
+      document.getElementById('trade-term-b').value = "6";
+      document.getElementById('trade-term-unit-b').value = "month";
+      document.getElementById('trade-rate-b').value = "8,86";
 
-    // --- LOGIC THẨM ĐỊNH CHI PHÍ CƠ HỘI CHUẨN XÁC 100% ---
-    function calculateOpportunityTradeoff() {
-      const P = parseNumber(document.getElementById('cur-amount').value);
-      const rA = parseRateInput(document.getElementById('cur-rate').value);
-      const rDemand = parseRateInput(document.getElementById('cur-demand-rate').value);
+      const today = new Date();
+      const twentySixDaysAgo = new Date();
+      twentySixDaysAgo.setDate(twentySixDaysAgo.getDate() - 26);
+      if (fpTradeStart) fpTradeStart.setDate(twentySixDaysAgo, true);
+      if (fpTradeWithdraw) fpTradeWithdraw.setDate(today, true);
 
-      const newTermVal = parseInt(document.getElementById('new-term').value) || 0;
-      const newTermUnit = document.getElementById('new-term-unit').value;
-      const rB = parseRateInput(document.getElementById('new-rate').value);
+      runTradeoffEvaluation();
+    }
 
-      if (!curDatePicker || !withdrawDatePicker) return;
-      const startDate = curDatePicker.selectedDates[0];
-      const withdrawDate = withdrawDatePicker.selectedDates[0];
+    function runTradeoffEvaluation() {
+      const P = parseNumber(document.getElementById('trade-amount').value);
+      const rA = parseRateInput(document.getElementById('trade-rate-a').value);
+      const rDemand = parseRateInput(document.getElementById('trade-demand-rate').value);
+
+      const termBVal = parseInt(document.getElementById('trade-term-b').value) || 0;
+      const termBUnit = document.getElementById('trade-term-unit-b').value;
+      const rB = parseRateInput(document.getElementById('trade-rate-b').value);
+
+      if (!fpTradeStart || !fpTradeWithdraw) return;
+      const startDate = fpTradeStart.selectedDates[0];
+      const withdrawDate = fpTradeWithdraw.selectedDates[0];
       if (!startDate || !withdrawDate) return;
 
-      // 1. Tính số ngày đã giữ vốn (d ngày)
-      const d = getDaysDiff(startDate, withdrawDate);
-      document.getElementById('holding-days-count').textContent = d;
-      document.getElementById('res-d-days').textContent = d;
+      // 1. Số ngày đã giữ vốn d
+      const d = Math.max(0, getDaysDiff(startDate, withdrawDate));
+      document.getElementById('trade-d-days-display').textContent = `${d} ngày`;
+      document.getElementById('box-d-days').textContent = d;
 
-      // 2. Tính số ngày chuẩn của kỳ hạn mới N (chuẩn 180 ngày cho 6 tháng)
-      const newMaturityDate = addTermToDate(withdrawDate, newTermVal, newTermUnit);
-      let N = getDaysDiff(withdrawDate, newMaturityDate);
-      // Nếu là kỳ hạn tháng tiêu chuẩn 6 tháng, ngân hàng thường tính dao động 180-184 ngày
-      document.getElementById('new-term-days-count').textContent = `${N} ngày`;
+      // 2. Số ngày chuẩn của kỳ hạn mới N
+      const maturityNew = addTermToDate(withdrawDate, termBVal, termBUnit);
+      const N = Math.max(1, getDaysDiff(withdrawDate, maturityNew));
+      document.getElementById('trade-n-days-display').textContent = `${N} ngày`;
 
-      // 3. Hiển thị mức chênh lệch lãi suất
+      // 3. Chênh lệch lãi suất
       const deltaRate = rB - rA;
-      const rateIndicator = document.getElementById('rate-diff-indicator');
+      const rateBadge = document.getElementById('trade-rate-diff-badge');
       if (deltaRate > 0) {
-        rateIndicator.className = "text-[11px] text-emerald-600 font-bold mt-1";
-        rateIndicator.textContent = `Chênh lệch: +${deltaRate.toFixed(2).replace('.', ',')}%/năm`;
+        rateBadge.className = "text-[11px] font-bold mt-1 text-emerald-600";
+        rateBadge.textContent = `Chênh lệch: +${deltaRate.toFixed(2).replace('.', ',')}%/năm`;
       } else {
-        rateIndicator.className = "text-[11px] text-rose-600 font-bold mt-1";
-        rateIndicator.textContent = `Chênh lệch: ${deltaRate.toFixed(2).replace('.', ',')}%/năm (Lãi mới thấp hơn hoặc bằng)`;
+        rateBadge.className = "text-[11px] font-bold mt-1 text-rose-600";
+        rateBadge.textContent = `Chênh lệch: ${deltaRate.toFixed(2).replace('.', ',')}%/năm (Lãi mới không cao hơn)`;
       }
 
-      // --- BƯỚC 1: CÁI GIÁ PHẢI TRẢ (LÃI TÍCH LŨY GÓI A BỊ MẤT SẠCH DO RÚT NON) ---
-      // Nếu ngân hàng không tính lãi (0%), mất trọn (P * rA * d)/365. Nếu có lãi không kỳ hạn, trừ bớt phần đó.
+      // --- BƯỚC 1: CÁI GIÁ PHẢI TRẢ (LÃI GÓI A BỊ XÓA TRẮNG KHI RÚT NON SAU d NGÀY) ---
       const lostInterest = (P * ((rA - rDemand) / 100) * d) / 365;
 
       // --- BƯỚC 2: TỔNG LÃI GÓI B TRỌN KỲ HẠN N NGÀY ---
       const gainB = (P * (rB / 100) * N) / 365;
 
-      // --- BƯỚC 3: TỔNG LÃI GÓI A CHUẨN TRỌN KỲ HẠN N NGÀY ---
+      // --- BƯỚC 3: TỔNG LÃI GÓI A TRỌN KỲ HẠN N NGÀY ---
       const gainA = (P * (rA / 100) * N) / 365;
 
       // --- BƯỚC 4: PHẦN LÃI CHÊNH LỆCH GÓI B MANG LẠI THÊM SO VỚI GÓI A ---
       const extraGain = gainB - gainA;
 
       // --- BƯỚC 5: CÂN ĐỐI TRADE-OFF RÒNG ---
-      // Lợi ích ròng = (Phần thặng dư Gói B đem lại) - (Cái giá d ngày đã mất trắng)
       const deltaNet = extraGain - lostInterest;
 
-      // Cập nhật lên giao diện
-      document.getElementById('res-lost-interest').textContent = '-' + formatVND(lostInterest);
-      document.getElementById('res-extra-gain').textContent = '+' + formatVND(extraGain);
-      document.getElementById('res-gain-b').textContent = formatVND(gainB);
-      document.getElementById('res-gain-a').textContent = formatVND(gainA);
+      // Hiển thị các khối bóc tách
+      document.getElementById('box-lost-amount').textContent = '-' + formatVND(lostInterest);
+      document.getElementById('box-gain-extra').textContent = (extraGain >= 0 ? '+' : '') + formatVND(extraGain);
+      document.getElementById('box-gain-b').textContent = formatVND(gainB);
+      document.getElementById('box-gain-a').textContent = formatVND(gainA);
 
       // Tỷ lệ kinh tế
-      const ratioRate = rA > 0 ? (deltaRate / (rA - rDemand)) * 100 : 0;
+      const ratioRate = (rA - rDemand) > 0 ? (deltaRate / (rA - rDemand)) * 100 : 0;
       const ratioTime = N > 0 ? (d / N) * 100 : 0;
-      document.getElementById('res-ratio-rate').textContent = (ratioRate >= 0 ? '+' : '') + ratioRate.toFixed(2) + '%';
-      document.getElementById('res-ratio-time').textContent = ratioTime.toFixed(2) + '%';
+      document.getElementById('box-ratio-rate').textContent = (ratioRate >= 0 ? '+' : '') + ratioRate.toFixed(2) + '%';
+      document.getElementById('box-ratio-time').textContent = ratioTime.toFixed(2) + '%';
 
-      // HIỂN THỊ KẾT LUẬN MINH BẠCH
-      const card = document.getElementById('decision-card');
-      const statusBadge = document.getElementById('decision-status');
-      const netAmountElem = document.getElementById('decision-net-amount');
-      const detailText = document.getElementById('decision-detail-text');
+      // Cập nhật card quyết định lớn
+      const card = document.getElementById('trade-decision-card');
+      const badge = document.getElementById('trade-decision-badge');
+      const netElem = document.getElementById('trade-net-amount');
+      const summary = document.getElementById('trade-detail-summary');
 
       if (d === 0) {
-        card.className = "p-4 rounded-xl border border-blue-200 bg-blue-50 text-center mb-4";
-        statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-blue-100 text-blue-800";
-        statusBadge.textContent = "VỪA MỚI GỬI (0 NGÀY)";
-        netAmountElem.className = "text-3xl font-black mb-1 text-blue-700";
-        netAmountElem.textContent = '+' + formatVND(extraGain);
-        detailText.textContent = "Bạn vừa mới mở sổ, chưa có lãi tích lũy bị mất. Đổi sang Gói B ngay lập tức sẽ hưởng trọn vẹn phần chênh lệch thặng dư.";
+        card.className = "p-4 rounded-2xl border-2 border-blue-400 bg-blue-50 text-center transition-all mb-4 shadow-sm";
+        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-blue-600 text-white";
+        badge.textContent = "VỪA MỚI GỬI (0 NGÀY)";
+        netElem.className = "text-2xl sm:text-3xl font-black mb-1 text-blue-700";
+        netElem.textContent = '+' + formatVND(extraGain);
+        summary.className = "text-xs font-semibold leading-relaxed text-blue-900";
+        summary.textContent = "Chưa có tiền lãi tích lũy bị mất. Rút sang Gói B ngay để tận dụng trọn vẹn lãi suất cao hơn.";
       } else if (deltaNet > 0) {
-        // CÓ LỜI THỰC TẾ
-        card.className = "p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-center mb-4";
-        statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-emerald-100 text-emerald-800";
-        statusBadge.textContent = "NÊN ĐỔI SỔ - CÓ LỜI RÒNG";
-        netAmountElem.className = "text-3xl font-black mb-1 text-emerald-700";
-        netAmountElem.textContent = '+' + formatVND(deltaNet);
-        detailText.textContent = `Lãi suất Gói B đủ cao (+${deltaRate.toFixed(2)}%/năm) để gánh hết khoản lãi ${formatVND(lostInterest)} bị mất của ${d} ngày qua và đem lại thêm ${formatVND(deltaNet)} lợi nhuận ròng.`;
+        card.className = "p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-center transition-all mb-4 shadow-sm";
+        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-emerald-600 text-white";
+        badge.textContent = "NÊN ĐỔI SỔ - CÓ LỜI RÒNG";
+        netElem.className = "text-2xl sm:text-3xl font-black mb-1 text-emerald-700";
+        netElem.textContent = '+' + formatVND(deltaNet);
+        summary.className = "text-xs font-semibold leading-relaxed text-emerald-900";
+        summary.textContent = `Lãi suất Gói B đủ cao (+${deltaRate.toFixed(2)}%/năm) để gánh toàn bộ khoản lãi ${formatVND(lostInterest)} bị xóa sạch của ${d} ngày qua và đem lại thêm ${formatVND(deltaNet)} thặng dư ròng.`;
       } else {
-        // ĐANG LỖ (SỐ ÂM) - KHÔNG ĐƯỢC CHUYỂN
         const lossAmount = Math.abs(deltaNet);
-        card.className = "p-4 rounded-xl border border-rose-200 bg-rose-50 text-center mb-4";
-        statusBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-rose-100 text-rose-800";
-        statusBadge.textContent = "ÂM: KHÔNG NÊN ĐỔI - CHẮC CHẮN BỊ LỖ!";
-        netAmountElem.className = "text-3xl font-black mb-1 text-rose-700";
-        netAmountElem.textContent = '-' + formatVND(lossAmount);
-        detailText.textContent = `Mức tiền kiếm thêm từ lãi suất cao hơn (${formatVND(extraGain)}) không đủ để bù lại khoản tiền lãi ${formatVND(lostInterest)} của ${d} ngày bạn đã ngâm vốn. Đổi lúc này bạn sẽ bị thiệt hại ròng ${formatVND(lossAmount)}.`;
+        card.className = "p-4 rounded-2xl border-2 border-rose-500 bg-rose-50 text-center transition-all mb-4 shadow-sm";
+        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-rose-600 text-white";
+        badge.textContent = "CẢNH BÁO: KHÔNG NÊN ĐỔI - SẼ BỊ LỖ!";
+        netElem.className = "text-2xl sm:text-3xl font-black mb-1 text-rose-700";
+        netElem.textContent = '-' + formatVND(lossAmount);
+        summary.className = "text-xs font-semibold leading-relaxed text-rose-900";
+        summary.textContent = `Mức tiền kiếm thêm từ lãi suất mới (${formatVND(extraGain)}) KHÔNG ĐỦ bù lại khoản lãi ${formatVND(lostInterest)} của ${d} ngày bạn đã ngâm vốn. Đổi lúc này sẽ bị THIỆT HẠI RÒNG ${formatVND(lossAmount)}!`;
       }
     }
 
-    // --- TAB TÍNH LÃI ĐƠN LẺ ---
-    let singleChart;
-    function initChart() {
+    /* ==========================================================================
+       [SECTION 4] TOOL 2: TÍNH LÃI SUẤT TIẾT KIỆM ĐƠN LẺ
+       Chuẩn Thông tư 14/2017/TT-NHNN và biểu đồ phân bổ gốc lãi
+       ========================================================================== */
+    let fpSingleStart, singleChart;
+
+    function initSinglePickers() {
+      const today = new Date();
+      fpSingleStart = flatpickr("#single-start-date", {
+        dateFormat: "d/m/Y",
+        defaultDate: today,
+        locale: "vn",
+        allowInput: true,
+        onChange: () => runSingleCalculation()
+      });
+    }
+
+    function initSingleChart() {
       const ctx = document.getElementById('singleChart').getContext('2d');
       singleChart = new Chart(ctx, {
         type: 'doughnut',
@@ -652,28 +932,46 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } },
-          cutout: '70%'
+          plugins: { legend: { display: false } },
+          cutout: '72%'
         }
       });
     }
 
-    function calculateSingle() {
+    function resetSingleCalcDefaults() {
+      document.getElementById('single-amount').value = "100,000,000";
+      document.getElementById('single-term').value = "6";
+      document.getElementById('single-term-unit').value = "month";
+      document.getElementById('single-rate').value = "5,8";
+      document.getElementById('single-rate-unit').value = "year";
+      document.getElementById('single-method').value = "end";
+
+      if (fpSingleStart) fpSingleStart.setDate(new Date(), true);
+      runSingleCalculation();
+    }
+
+    function runSingleCalculation() {
       const P = parseNumber(document.getElementById('single-amount').value);
       const term = parseInt(document.getElementById('single-term').value) || 0;
       const termUnit = document.getElementById('single-term-unit').value;
-      const r = parseRateInput(document.getElementById('single-rate').value);
+      const rawRate = parseRateInput(document.getElementById('single-rate').value);
+      const rateUnit = document.getElementById('single-rate-unit').value;
       const method = document.getElementById('single-method').value;
 
-      if (!singleDatePicker) return;
-      const startDate = singleDatePicker.selectedDates[0] || new Date();
+      let annualRate = rawRate;
+      if (rateUnit === 'month') annualRate = rawRate * 12;
+      if (rateUnit === 'day') annualRate = rawRate * 365;
+
+      if (!fpSingleStart) return;
+      const startDate = fpSingleStart.selectedDates[0] || new Date();
       const maturityDate = addTermToDate(startDate, term, termUnit);
-      const totalDays = getDaysDiff(startDate, maturityDate);
+      const totalDays = Math.max(1, getDaysDiff(startDate, maturityDate));
 
       document.getElementById('single-maturity-badge').textContent = `Đáo hạn: ${formatDateVN(maturityDate)}`;
       document.getElementById('single-res-days').textContent = `${totalDays} ngày`;
 
-      const interest = (P * (r / 100) * totalDays) / 365;
+      // Công thức Thông tư 14: Lãi = (P * r * totalDays) / 365
+      const interest = (P * (annualRate / 100) * totalDays) / 365;
       const total = P + interest;
 
       document.getElementById('single-res-interest').textContent = formatVND(interest);
@@ -682,21 +980,194 @@
 
       const monthsCount = Math.max(1, totalDays / 30.416);
       document.getElementById('single-res-per-month').textContent = formatVND(interest / monthsCount) + '/tháng';
-      document.getElementById('single-res-per-day').textContent = formatVND(totalDays > 0 ? interest / totalDays : 0) + '/ngày';
+      document.getElementById('single-res-per-day').textContent = formatVND(interest / totalDays) + '/ngày';
+
+      const yieldPercent = P > 0 ? ((interest / P) * 100).toFixed(2) : "0.00";
+      document.getElementById('single-res-yield').textContent = `+${yieldPercent}%`;
 
       if (method === 'beginning') {
-        document.getElementById('single-res-detail').textContent = 'Nhận ngay khi gửi';
+        document.getElementById('single-res-detail').textContent = 'Nhận trọn tiền lãi ngay lúc gửi';
       } else if (method === 'monthly') {
-        document.getElementById('single-res-detail').textContent = `~${formatVND(interest / monthsCount)}/tháng`;
+        const months = termUnit === 'month' ? term : (termUnit === 'year' ? term * 12 : Math.max(1, Math.round(totalDays / 30.416)));
+        document.getElementById('single-res-detail').textContent = `Nhận đều ~${formatVND(interest / months)}/tháng`;
       } else {
-        document.getElementById('single-res-detail').textContent = 'Nhận trọn gói khi đáo hạn';
+        document.getElementById('single-res-detail').textContent = 'Lĩnh trọn gói gốc + lãi khi đáo hạn';
       }
 
       if (singleChart) {
-        singleChart.data.datasets[0].data = [P, interest];
+        singleChart.data.datasets[0].data = [P, Math.round(interest)];
         singleChart.update();
       }
     }
+
+    /* ==========================================================================
+       [SECTION 5] NAVIGATION & HAMBURGER DRAWER SYSTEM
+       Tự động sort Alphabet (A-Z), Live search bộ lọc, Switch tool views
+       ========================================================================== */
+
+    function toggleDrawer(open) {
+      const container = document.getElementById('drawer-container');
+      const backdrop = document.getElementById('drawer-backdrop');
+      const panel = document.getElementById('drawer-panel');
+
+      if (open) {
+        container.classList.remove('pointer-events-none');
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100');
+        panel.classList.remove('-translate-x-full');
+        panel.classList.add('translate-x-0');
+        setTimeout(() => document.getElementById('tool-search-input').focus(), 150);
+      } else {
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        panel.classList.remove('translate-x-0');
+        panel.classList.add('-translate-x-full');
+        setTimeout(() => container.classList.add('pointer-events-none'), 300);
+      }
+    }
+
+    // Render danh sách công cụ theo bảng chữ cái A-Z và phân nhóm danh mục
+    function renderDrawerTools(filterKeyword = "") {
+      const container = document.getElementById('tools-list-container');
+      container.innerHTML = "";
+
+      // 1. Sắp xếp theo Alphabet tiếng Việt chuẩn (A -> Z)
+      const sortedTools = [...TOOL_REGISTRY].sort((a, b) => 
+        a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' })
+      );
+
+      // 2. Lọc theo từ khóa tìm kiếm
+      const keyword = filterKeyword.trim().toLowerCase();
+      const filteredTools = sortedTools.filter(tool => {
+        if (!keyword) return true;
+        const inName = tool.name.toLowerCase().includes(keyword);
+        const inDesc = tool.description.toLowerCase().includes(keyword);
+        const inKeywords = tool.keywords.some(k => k.toLowerCase().includes(keyword));
+        return inName || inDesc || inKeywords;
+      });
+
+      if (filteredTools.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4">
+            <i class="fa-solid fa-folder-open text-slate-300 text-3xl mb-2"></i>
+            <p class="text-xs font-semibold text-slate-500">Không tìm thấy công cụ nào phù hợp với từ khóa "${filterKeyword}".</p>
+          </div>
+        `;
+        return;
+      }
+
+      // 3. Gom nhóm theo Category
+      const groups = {};
+      filteredTools.forEach(tool => {
+        if (!groups[tool.category]) groups[tool.category] = [];
+        groups[tool.category].push(tool);
+      });
+
+      // 4. Render HTML các nhóm
+      Object.keys(groups).forEach(catName => {
+        const groupEl = document.createElement('div');
+        groupEl.className = "space-y-1.5";
+
+        const titleEl = document.createElement('div');
+        titleEl.className = "text-[11px] font-extrabold uppercase tracking-wider text-slate-400 px-2";
+        titleEl.textContent = catName;
+        groupEl.appendChild(titleEl);
+
+        groups[catName].forEach(tool => {
+          const isActive = tool.id === currentActiveToolId;
+          const itemBtn = document.createElement('button');
+          itemBtn.onclick = () => selectTool(tool.id);
+          itemBtn.className = `w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 ${
+            isActive 
+              ? 'bg-indigo-50/90 border-indigo-200 text-indigo-950 shadow-sm' 
+              : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+          }`;
+
+          itemBtn.innerHTML = `
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+              isActive ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
+            }">
+              <i class="fa-solid ${tool.icon} text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-1">
+                <h4 class="text-xs font-bold truncate ${isActive ? 'text-indigo-950' : 'text-slate-800'}">${tool.name}</h4>
+                ${tool.badge ? `<span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded ${
+                  isActive ? 'bg-indigo-200/60 text-indigo-800' : 'bg-slate-100 text-slate-500'
+                }">${tool.badge}</span>` : ''}
+              </div>
+              <p class="text-[11px] text-slate-400 line-clamp-2 mt-0.5 leading-snug">${tool.description}</p>
+            </div>
+          `;
+          groupEl.appendChild(itemBtn);
+        });
+
+        container.appendChild(groupEl);
+      });
+    }
+
+    function filterTools() {
+      const val = document.getElementById('tool-search-input').value;
+      const clearBtn = document.getElementById('btn-clear-search');
+      if (val.trim()) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      renderDrawerTools(val);
+    }
+
+    function clearSearch() {
+      document.getElementById('tool-search-input').value = "";
+      document.getElementById('btn-clear-search').classList.add('hidden');
+      renderDrawerTools("");
+      document.getElementById('tool-search-input').focus();
+    }
+
+    // Chuyển đổi màn hình công cụ mượt mà
+    function selectTool(toolId) {
+      currentActiveToolId = toolId;
+      const foundTool = TOOL_REGISTRY.find(t => t.id === toolId);
+
+      // Cập nhật Breadcrumb & Title
+      if (foundTool) {
+        document.getElementById('active-tool-crumb').textContent = foundTool.name;
+        document.getElementById('active-tool-category').textContent = foundTool.category;
+      }
+
+      // Hide all tools & Show selected
+      document.querySelectorAll('.tool-view-container').forEach(el => el.classList.add('hidden'));
+      const activeEl = document.getElementById(toolId);
+      if (activeEl) {
+        activeEl.classList.remove('hidden');
+      }
+
+      // Re-trigger calculation if needed
+      if (toolId === 'tool-view-early-withdraw') {
+        runTradeoffEvaluation();
+      } else if (toolId === 'tool-view-single-calc') {
+        runSingleCalculation();
+      }
+
+      // Re-render drawer list to reflect active state
+      renderDrawerTools(document.getElementById('tool-search-input').value);
+      toggleDrawer(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Khởi động toàn bộ ứng dụng khi DOM tải xong
+    document.addEventListener('DOMContentLoaded', () => {
+      initTradeoffPickers();
+      initSinglePickers();
+      initSingleChart();
+
+      // Render danh sách công cụ A-Z ban đầu
+      renderDrawerTools();
+
+      // Chạy tính toán khởi điểm
+      runTradeoffEvaluation();
+      runSingleCalculation();
+    });
   </script>
 </body>
 </html>
