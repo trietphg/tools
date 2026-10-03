@@ -594,6 +594,297 @@
       </div>
     </article>
 
+    
+
+<!-- ==========================================================================
+         [HTML SECTION 6] TOOL MODULE 3: MÔ PHỎNG NHIỆT ĐỘ ĐUN SÔI & ĐỂ NGUỘI
+         ID: tool-view-thermal-sim
+         Danh mục: Tiện Ích Cuộc Sống
+         ========================================================================== -->
+    <article id="tool-view-thermal-sim" class="tool-view-container hidden space-y-6">
+      
+      <!-- Module Header Info -->
+      <div class="bg-gradient-to-r from-slate-900 to-amber-950 text-white p-5 rounded-2xl shadow-sm border border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-amber-500/30 text-amber-300 border border-amber-500/40 uppercase tracking-wide">Mô Hình Giải Tích Nhiệt</span>
+              <span class="text-xs text-slate-400">| Lumped Capacitance & Newton's Law</span>
+            </div>
+            <h2 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">Mô Phỏng Nhiệt Độ (Đun Sôi & Để Nguội)</h2>
+            <p class="text-xs text-slate-300 max-w-3xl leading-relaxed">
+              Mô phỏng đường cong tăng/hạ nhiệt theo thời gian thực tế dựa trên khối chất, hình dạng, chất liệu vật chứa, độ dày thành, nắp đậy, môi trường đối lưu và công suất nguồn nhiệt.
+            </p>
+          </div>
+          <button onclick="resetThermalDefaults()" class="self-start sm:self-auto text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl border border-slate-700 transition flex items-center gap-1.5 shrink-0">
+            <i class="fa-solid fa-rotate-left"></i> Đặt lại mặc định
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Input & Output Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- CỘT TRÁI: FORM NHẬP THAM SỐ (7 CỘT) -->
+        <div class="lg:col-span-7 bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
+          
+          <!-- Chế độ & Mục tiêu tính -->
+          <div class="bg-amber-50/70 border border-amber-200 p-4 rounded-xl">
+            <label class="block text-xs font-bold uppercase tracking-wider text-amber-950 mb-2">
+              <i class="fa-solid fa-crosshairs mr-1"></i> Mục Tiêu Tính Toán
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Chế độ vận hành</label>
+                <select id="thermal-mode" onchange="toggleThermalSourceInputs(); runThermalSimulation();" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="cool" selected>Để nguội (Tự nhiên / Môi trường)</option>
+                  <option value="heat">Đun sôi / Gia nhiệt có nguồn cấp</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Phương thức khảo sát</label>
+                <select id="thermal-target-type" onchange="toggleTargetTypeInput(); runThermalSimulation();" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="time" selected>Khảo sát nhiệt độ sau thời gian t</option>
+                  <option value="temp">Khảo sát thời gian để đạt nhiệt độ T</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Khối nhập thời gian hoặc nhiệt độ mong muốn -->
+            <div class="mt-3 pt-3 border-t border-amber-200/60 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div id="wrapper-target-time">
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Thời gian khảo sát (Phút : Giây)</label>
+                <div class="flex gap-2 items-center">
+                  <input type="number" id="thermal-time-min" value="5" min="0" oninput="runThermalSimulation();" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-center outline-none" placeholder="Phút">
+                  <span class="text-xs font-bold text-slate-400">:</span>
+                  <input type="number" id="thermal-time-sec" value="30" min="0" max="59" oninput="runThermalSimulation();" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-center outline-none" placeholder="Giây">
+                </div>
+              </div>
+              <div id="wrapper-target-temp" class="hidden">
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Mức nhiệt độ mong muốn ($T_{\text{đích}}$)</label>
+                <div class="relative flex">
+                  <input type="text" id="thermal-target-temp" value="50" oninput="runThermalSimulation();" class="w-full pl-3 pr-10 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold outline-none">
+                  <select id="thermal-target-temp-unit" onchange="runThermalSimulation();" class="absolute right-1 top-1 bottom-1 px-2 bg-slate-100 border-0 rounded-lg text-xs font-bold">
+                    <option value="C" selected>°C</option>
+                    <option value="F">°F</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1. Khối cần đo -->
+          <div>
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2.5 flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-[10px]">1</span>
+              Khối Cần Đo (Chất & Định Lượng)
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Chất cần đo</label>
+                <select id="thermal-substance" onchange="runThermalSimulation();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="water" selected>Nước lọc</option>
+                  <option value="soup">Canh / Súp (có váng)</option>
+                  <option value="oil">Dầu ăn thực vật</option>
+                  <option value="milk">Sữa tươi</option>
+                  <option value="coffee">Cà phê</option>
+                  <option value="tea">Trà túi lọc</option>
+                  <option value="pork">Thịt heo (rắn)</option>
+                  <option value="chicken">Thịt gà (rắn)</option>
+                  <option value="seafood">Hải sản (tôm, cá, mực)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Thể tích / Khối lượng</label>
+                <div class="relative flex">
+                  <input type="text" id="thermal-mass-val" value="350" oninput="runThermalSimulation();" class="w-full pl-3 pr-12 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold outline-none">
+                  <select id="thermal-mass-unit" onchange="runThermalSimulation();" class="absolute right-1 top-1 bottom-1 px-1.5 bg-slate-200/80 rounded-lg text-xs font-bold">
+                    <option value="ml" selected>ml</option>
+                    <option value="g">g</option>
+                    <option value="l">Lít</option>
+                    <option value="kg">kg</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Nhiệt độ bắt đầu ($T_0$)</label>
+                <div class="relative flex">
+                  <input type="text" id="thermal-init-temp" value="95" oninput="runThermalSimulation();" class="w-full pl-3 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold outline-none">
+                  <select id="thermal-init-temp-unit" onchange="runThermalSimulation();" class="absolute right-1 top-1 bottom-1 px-2 bg-slate-200/80 rounded-lg text-xs font-bold">
+                    <option value="C" selected>°C</option>
+                    <option value="F">°F</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Dụng cụ chứa -->
+          <div>
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2.5 flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-[10px]">2</span>
+              Dụng Cụ Chứa (Hình Dáng, Vỏ & Nắp)
+            </h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Hình dáng</label>
+                <select id="thermal-shape" onchange="runThermalSimulation();" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
+                  <option value="cup" selected>Ly / Cốc đứng</option>
+                  <option value="bowl">Chén / Bát / Tô (loe)</option>
+                  <option value="pot">Nồi đáy phẳng</option>
+                  <option value="box">Hộp chữ nhật</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Chất liệu</label>
+                <select id="thermal-material" onchange="runThermalSimulation();" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
+                  <option value="ceramic" selected>Gốm sứ</option>
+                  <option value="glass">Thủy tinh</option>
+                  <option value="inox">Inox / Thép</option>
+                  <option value="aluminum">Nhôm</option>
+                  <option value="plastic">Nhựa PP</option>
+                  <option value="wood">Gỗ</option>
+                  <option value="vacuum">Bình chân không</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Độ dày vỏ (mm)</label>
+                <input type="number" id="thermal-wall-thick" value="3.5" step="0.5" min="0.5" oninput="runThermalSimulation();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-center outline-none">
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Tình trạng nắp</label>
+                <select id="thermal-lid" onchange="runThermalSimulation();" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold outline-none">
+                  <option value="open" selected>Mở nắp 100%</option>
+                  <option value="half">Mở hé 50%</option>
+                  <option value="closed">Đậy nắp kín</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Môi trường xung quanh & 4. Nguồn nhiệt -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Môi trường -->
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 block">
+                <i class="fa-solid fa-wind mr-1"></i> 3. Môi Trường Xung Quanh
+              </span>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 mb-1">Nhiệt độ phòng</label>
+                  <div class="relative flex">
+                    <input type="text" id="thermal-env-temp" value="28" oninput="runThermalSimulation();" class="w-full pl-2.5 pr-8 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold outline-none">
+                    <span class="absolute right-2 top-1.5 text-xs text-slate-400 font-bold">°C</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 mb-1">Đối lưu gió</label>
+                  <select id="thermal-airflow" onchange="runThermalSimulation();" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold outline-none">
+                    <option value="calm" selected>Gió tĩnh</option>
+                    <option value="fan">Quạt / Máy lạnh</option>
+                    <option value="strong">Gió lộng / Ngoài trời</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nguồn nhiệt bổ trợ -->
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600">
+                  <i class="fa-solid fa-fire mr-1 text-amber-600"></i> 4. Nguồn Nhiệt Cấp / Giữ Ấm
+                </span>
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="checkbox" id="thermal-source-enable" onchange="toggleThermalSourceInputs(); runThermalSimulation();" class="rounded text-amber-600">
+                  <span class="text-[10px] font-bold text-slate-500">Bật cấp nhiệt</span>
+                </label>
+              </div>
+
+              <div id="wrapper-heat-source-params" class="grid grid-cols-2 gap-2 opacity-50 pointer-events-none transition-opacity">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 mb-1">Loại thiết bị</label>
+                  <select id="thermal-heat-device" onchange="updateDevicePowerDefault(); runThermalSimulation();" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold outline-none">
+                    <option value="induction" selected>Bếp từ / Điện</option>
+                    <option value="gas">Bếp ga gia đình</option>
+                    <option value="microwave">Lò vi sóng</option>
+                    <option value="airfryer">Nồi chiên ko dầu</option>
+                    <option value="warmer">Đế hâm giữ ấm</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 mb-1">Công suất (Watt)</label>
+                  <input type="number" id="thermal-heat-power" value="1800" min="10" step="50" oninput="runThermalSimulation();" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold outline-none">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CỘT PHẢI: KẾT QUẢ TỨC THỜI & BIỂU ĐỒ GIẢI TÍCH (5 CỘT) -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+          <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                  <i class="fa-solid fa-temperature-half text-amber-600 mr-1.5"></i> Kết Quả Mô Phỏng
+                </h3>
+                <span id="thermal-status-pill" class="text-xs bg-amber-50 text-amber-800 px-3 py-1 rounded-full font-bold border border-amber-200">
+                  Đang tính...
+                </span>
+              </div>
+
+              <!-- Thẻ kết quả to -->
+              <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 rounded-xl text-center shadow mb-4">
+                <div id="thermal-res-caption" class="text-xs text-slate-300 uppercase font-semibold">Nhiệt độ sau 5 phút 30 giây</div>
+                <div id="thermal-res-main-value" class="text-3xl sm:text-4xl font-black text-amber-400 my-1">-- °C</div>
+                <div id="thermal-res-sub-value" class="text-xs text-slate-400">Tương đương -- °F</div>
+              </div>
+
+              <!-- Bóc tách thông số nhiệt động -->
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-slate-100">
+                  <span class="text-slate-500">Khối lượng thực tế ($m$):</span>
+                  <span id="thermal-res-mass" class="font-bold text-slate-800">-- g</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-100">
+                  <span class="text-slate-500">Hằng số làm mát giải tích ($k$):</span>
+                  <span id="thermal-res-k" class="font-mono font-bold text-amber-700">-- s⁻¹</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-100">
+                  <span class="text-slate-500">Thời gian đạt nhiệt độ uống an toàn (60°C):</span>
+                  <span id="thermal-res-safe-time" class="font-bold text-emerald-600">--</span>
+                </div>
+                <div class="flex justify-between py-1">
+                  <span class="text-slate-500">Trạng thái cảm quan:</span>
+                  <span id="thermal-res-sensory" class="font-bold text-slate-800">--</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Biểu đồ giải tích (Analytical Curve) -->
+            <div class="mt-4 pt-4 border-t border-slate-100">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Đường cong giải tích T(t)</span>
+                <span class="text-[10px] text-slate-400">Trục X: phút | Trục Y: °C</span>
+              </div>
+              <div class="w-full h-44">
+                <canvas id="thermalChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+
+    
   </main>
 
   <!-- Footer -->
@@ -739,7 +1030,17 @@
         badge: "Chuẩn TT14",
         description: "Tính lãi cuối kỳ, hàng tháng, đầu kỳ và biểu đồ phân bổ gốc lãi.",
         keywords: ["tinh lai", "tiet kiem", "ngan hang", "dao han", "lai don"]
-      }
+      },
+      {
+        id: "tool-view-thermal-sim",
+        name: "Mô Phỏng Nhiệt Độ (Đun Sôi & Để Nguội)",
+        category: "Tiện Ích Cuộc Sống",
+        icon: "fa-temperature-half",
+        badge: "Giải Tích",
+        description: "Mô phỏng đường cong tăng/hạ nhiệt theo chất liệu vật chứa, độ dày thành, nắp đậy, quạt gió và công suất nguồn nhiệt.",
+        keywords: ["nhiet do", "dun soi", "de nguoi", "truyen nhiet", "vat ly", "nau an", "canh sup", "pha tra", "giu am"]
+      },
+      
       // Bổ sung công cụ tiếp theo tại đây:
       // {
       //   id: "tool-view-inflation-calc",
@@ -1005,6 +1306,353 @@
        Tự động sort Alphabet (A-Z), Live search bộ lọc, Switch tool views
        ========================================================================== */
 
+/* ==========================================================================
+       [SECTION 6] TOOL 3: MÔ PHỎNG NHIỆT ĐỘ ĐUN SÔI & ĐỂ NGUỘI (GIẢI TÍCH NHIỆT)
+       Phân loại: Tiện Ích Cuộc Sống
+       ========================================================================== */
+
+    let thermalChart = null;
+
+    const SUBSTANCE_DATA = {
+      water:   { density: 1000, cp: 4184, evapFactor: 1.0,  maxT: 100, name: "Nước lọc" },
+      soup:    { density: 1020, cp: 3950, evapFactor: 0.75, maxT: 100, name: "Canh / Súp" },
+      oil:     { density: 920,  cp: 2000, evapFactor: 0.0,  maxT: 220, name: "Dầu ăn" },
+      milk:    { density: 1030, cp: 3900, evapFactor: 0.70, maxT: 100, name: "Sữa" },
+      coffee:  { density: 1000, cp: 4100, evapFactor: 0.95, maxT: 100, name: "Cà phê" },
+      tea:     { density: 1000, cp: 4180, evapFactor: 1.0,  maxT: 100, name: "Trà túi lọc" },
+      pork:    { density: 1050, cp: 3200, evapFactor: 0.1,  maxT: 120, name: "Thịt heo" },
+      chicken: { density: 1040, cp: 3350, evapFactor: 0.1,  maxT: 120, name: "Thịt gà" },
+      seafood: { density: 1030, cp: 3500, evapFactor: 0.1,  maxT: 120, name: "Hải sản" }
+    };
+
+    const MATERIAL_CONDUCTIVITY = {
+      inox: 16.0,
+      aluminum: 205.0,
+      ceramic: 1.5,
+      glass: 1.0,
+      plastic: 0.2,
+      wood: 0.15,
+      vacuum: 0.006
+    };
+
+    const DEVICE_EFFICIENCY = {
+      induction: 0.85,
+      gas: 0.50,
+      microwave: 0.70,
+      airfryer: 0.65,
+      warmer: 0.90
+    };
+
+    function toCelsius(val, unit) {
+      return unit === 'F' ? (val - 32) * (5 / 9) : val;
+    }
+
+    function fromCelsius(val, unit) {
+      return unit === 'F' ? (val * (9 / 5)) + 32 : val;
+    }
+
+    function toggleTargetTypeInput() {
+      const type = document.getElementById('thermal-target-type').value;
+      const wTime = document.getElementById('wrapper-target-time');
+      const wTemp = document.getElementById('wrapper-target-temp');
+      if (type === 'time') {
+        wTime.classList.remove('hidden');
+        wTemp.classList.add('hidden');
+      } else {
+        wTime.classList.add('hidden');
+        wTemp.classList.remove('hidden');
+      }
+    }
+
+    function toggleThermalSourceInputs() {
+      const mode = document.getElementById('thermal-mode').value;
+      const chk = document.getElementById('thermal-source-enable');
+      const box = document.getElementById('wrapper-heat-source-params');
+      if (mode === 'heat') chk.checked = true;
+      if (chk.checked) {
+        box.classList.remove('opacity-50', 'pointer-events-none');
+      } else {
+        box.classList.add('opacity-50', 'pointer-events-none');
+      }
+    }
+
+    function updateDevicePowerDefault() {
+      const dev = document.getElementById('thermal-heat-device').value;
+      const input = document.getElementById('thermal-heat-power');
+      const mapDefaults = { induction: 1800, gas: 2500, microwave: 800, airfryer: 1400, warmer: 45 };
+      if (mapDefaults[dev]) input.value = mapDefaults[dev];
+    }
+
+    function resetThermalDefaults() {
+      document.getElementById('thermal-mode').value = 'cool';
+      document.getElementById('thermal-target-type').value = 'time';
+      document.getElementById('thermal-time-min').value = '5';
+      document.getElementById('thermal-time-sec').value = '30';
+      document.getElementById('thermal-target-temp').value = '50';
+      document.getElementById('thermal-target-temp-unit').value = 'C';
+      document.getElementById('thermal-substance').value = 'water';
+      document.getElementById('thermal-mass-val').value = '350';
+      document.getElementById('thermal-mass-unit').value = 'ml';
+      document.getElementById('thermal-init-temp').value = '95';
+      document.getElementById('thermal-init-temp-unit').value = 'C';
+      document.getElementById('thermal-shape').value = 'cup';
+      document.getElementById('thermal-material').value = 'ceramic';
+      document.getElementById('thermal-wall-thick').value = '3.5';
+      document.getElementById('thermal-lid').value = 'open';
+      document.getElementById('thermal-env-temp').value = '28';
+      document.getElementById('thermal-airflow').value = 'calm';
+      document.getElementById('thermal-source-enable').checked = false;
+      document.getElementById('thermal-heat-device').value = 'induction';
+      document.getElementById('thermal-heat-power').value = '1800';
+
+      toggleTargetTypeInput();
+      toggleThermalSourceInputs();
+      runThermalSimulation();
+    }
+
+    function initThermalChart() {
+      const canvas = document.getElementById('thermalChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      thermalChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Nhiệt độ T(t) (°C)',
+              data: [],
+              borderColor: '#d97706',
+              backgroundColor: 'rgba(217, 119, 6, 0.1)',
+              borderWidth: 2.5,
+              tension: 0.35,
+              fill: true,
+              pointRadius: 0
+            },
+            {
+              label: 'Điểm khảo sát',
+              data: [],
+              borderColor: '#ef4444',
+              backgroundColor: '#ef4444',
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              showLine: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label || ''}: ${ctx.raw.toFixed(1)} °C`
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Thời gian (phút)', font: { size: 10 } },
+              grid: { display: false }
+            },
+            y: {
+              title: { display: true, text: 'Nhiệt độ (°C)', font: { size: 10 } },
+              grid: { color: '#f1f5f9' }
+            }
+          }
+        }
+      });
+    }
+
+    function runThermalSimulation() {
+      const subKey = document.getElementById('thermal-substance').value;
+      const sub = SUBSTANCE_DATA[subKey] || SUBSTANCE_DATA.water;
+      const massVal = parseRateInput(document.getElementById('thermal-mass-val').value) || 100;
+      const massUnit = document.getElementById('thermal-mass-unit').value;
+
+      let massKg = 0.35;
+      if (massUnit === 'ml') massKg = (massVal * sub.density) / 1e6;
+      else if (massUnit === 'g') massKg = massVal / 1000;
+      else if (massUnit === 'l') massKg = (massVal * 1000 * sub.density) / 1e6;
+      else if (massUnit === 'kg') massKg = massVal;
+      massKg = Math.max(0.01, massKg);
+
+      const initTVal = parseRateInput(document.getElementById('thermal-init-temp').value);
+      const initTUnit = document.getElementById('thermal-init-temp-unit').value;
+      const T0 = toCelsius(initTVal, initTUnit);
+
+      const envTVal = parseRateInput(document.getElementById('thermal-env-temp').value);
+      const T_env = envTVal;
+
+      const shape = document.getElementById('thermal-shape').value;
+      const matKey = document.getElementById('thermal-material').value;
+      const lambdaMat = MATERIAL_CONDUCTIVITY[matKey] || 1.0;
+      const wallMm = Math.max(0.2, parseRateInput(document.getElementById('thermal-wall-thick').value) || 3.0);
+      const wallMeter = wallMm / 1000;
+      const lid = document.getElementById('thermal-lid').value;
+
+      const volumeM3 = massKg / sub.density;
+      let r = 0.04, h = 0.08, A_side = 0.02, A_top = 0.005;
+      if (shape === 'cup') {
+        r = Math.cbrt(volumeM3 / (2 * Math.PI));
+        h = 2 * r;
+        A_side = 2 * Math.PI * r * h;
+        A_top = Math.PI * r * r;
+      } else if (shape === 'bowl') {
+        r = Math.cbrt((3 * volumeM3) / (2 * Math.PI));
+        A_side = 2 * Math.PI * r * r;
+        A_top = Math.PI * r * r;
+      } else if (shape === 'pot') {
+        r = Math.sqrt(volumeM3 / (0.1 * Math.PI));
+        h = 0.1;
+        A_side = 2 * Math.PI * r * h;
+        A_top = Math.PI * r * r;
+      } else {
+        const s = Math.cbrt(volumeM3);
+        A_side = 4 * s * s;
+        A_top = s * s;
+      }
+
+      const airflow = document.getElementById('thermal-airflow').value;
+      let h_ext = 8.0;
+      if (airflow === 'fan') h_ext = 20.0;
+      if (airflow === 'strong') h_ext = 40.0;
+
+      let lidFactor = 1.0;
+      if (lid === 'half') lidFactor = 0.5;
+      if (lid === 'closed') lidFactor = 0.05;
+
+      const R_wall = (1 / 150) + (wallMeter / lambdaMat) + (1 / h_ext);
+      const U_wall = 1 / R_wall;
+      const h_top = (h_ext * 1.2 + (sub.evapFactor * 35.0 * lidFactor));
+      const UA = (U_wall * A_side) + (h_top * A_top);
+
+      const isHeatingEnabled = document.getElementById('thermal-source-enable').checked;
+      let Q_in = 0;
+      if (isHeatingEnabled) {
+        const pWatt = parseRateInput(document.getElementById('thermal-heat-power').value) || 0;
+        const devKey = document.getElementById('thermal-heat-device').value;
+        const eff = DEVICE_EFFICIENCY[devKey] || 0.8;
+        Q_in = pWatt * eff;
+      }
+
+      const k = UA / (massKg * sub.cp);
+
+      const calcTempAtSeconds = (tSec) => {
+        const T_asymptote = T_env + (Q_in / UA);
+        let T_val = T_asymptote + (T0 - T_asymptote) * Math.exp(-k * tSec);
+        if (T_val > sub.maxT && sub.maxT <= 100) T_val = sub.maxT;
+        return T_val;
+      };
+
+      const calcSecondsAtTemp = (targetT) => {
+        const T_asymptote = T_env + (Q_in / UA);
+        const numerator = targetT - T_asymptote;
+        const denominator = T0 - T_asymptote;
+        if (denominator === 0 || numerator / denominator <= 0) return null;
+        return -Math.log(numerator / denominator) / k;
+      };
+
+      const targetType = document.getElementById('thermal-target-type').value;
+      let finalTemp = 0;
+      let finalSeconds = 0;
+
+      if (targetType === 'time') {
+        const minVal = parseInt(document.getElementById('thermal-time-min').value) || 0;
+        const secVal = parseInt(document.getElementById('thermal-time-sec').value) || 0;
+        finalSeconds = (minVal * 60) + secVal;
+        finalTemp = calcTempAtSeconds(finalSeconds);
+        document.getElementById('thermal-res-caption').textContent = `Nhiệt độ sau ${minVal} phút ${secVal} giây`;
+      } else {
+        const tgtTVal = parseRateInput(document.getElementById('thermal-target-temp').value);
+        const tgtUnit = document.getElementById('thermal-target-temp-unit').value;
+        const targetTCelsius = toCelsius(tgtTVal, tgtUnit);
+
+        const secFound = calcSecondsAtTemp(targetTCelsius);
+        if (secFound !== null && secFound >= 0) {
+          finalSeconds = secFound;
+          finalTemp = targetTCelsius;
+          const m = Math.floor(secFound / 60);
+          const s = Math.round(secFound % 60);
+          document.getElementById('thermal-res-caption').textContent = `Thời gian đạt ${tgtTVal}°${tgtUnit}: ${m} phút ${s} giây`;
+        } else {
+          finalSeconds = 0;
+          finalTemp = T0;
+          document.getElementById('thermal-res-caption').textContent = `Không đạt được mức nhiệt này trong điều kiện đã chọn`;
+        }
+      }
+
+      document.getElementById('thermal-res-main-value').textContent = `${finalTemp.toFixed(1)} °C`;
+      document.getElementById('thermal-res-sub-value').textContent = `Tương đương ${fromCelsius(finalTemp, 'F').toFixed(1)} °F`;
+      document.getElementById('thermal-res-mass').textContent = `${Math.round(massKg * 1000)} g`;
+      document.getElementById('thermal-res-k').textContent = `${k.toFixed(5)} s⁻¹`;
+
+      const secToSafe = calcSecondsAtTemp(60.0);
+      const safeTimeElem = document.getElementById('thermal-res-safe-time');
+      if (T0 <= 60) {
+        safeTimeElem.textContent = "Đã ở ngưỡng an toàn ngay từ đầu";
+      } else if (secToSafe !== null && secToSafe > 0) {
+        const mSafe = Math.floor(secToSafe / 60);
+        const sSafe = Math.round(secToSafe % 60);
+        safeTimeElem.textContent = `Khoảng ${mSafe}p ${sSafe}s`;
+      } else {
+        safeTimeElem.textContent = "Không đạt được";
+      }
+
+      const sensoryElem = document.getElementById('thermal-res-sensory');
+      const pillElem = document.getElementById('thermal-status-pill');
+      if (finalTemp >= 80) {
+        sensoryElem.textContent = "Rất nóng - Nguy cơ bỏng cao";
+        sensoryElem.className = "font-bold text-rose-600";
+        pillElem.className = "text-xs bg-rose-50 text-rose-700 px-3 py-1 rounded-full font-bold border border-rose-200";
+        pillElem.textContent = "Rất nóng";
+      } else if (finalTemp >= 55) {
+        sensoryElem.textContent = "Ấm nóng vừa miệng - Dùng an toàn";
+        sensoryElem.className = "font-bold text-emerald-600";
+        pillElem.className = "text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold border border-emerald-200";
+        pillElem.textContent = "Vừa miệng";
+      } else if (finalTemp >= 35) {
+        sensoryElem.textContent = "Ấm nhẹ";
+        sensoryElem.className = "font-bold text-blue-600";
+        pillElem.className = "text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold border border-blue-200";
+        pillElem.textContent = "Ấm nhẹ";
+      } else {
+        sensoryElem.textContent = "Nguội hoàn toàn";
+        sensoryElem.className = "font-bold text-slate-600";
+        pillElem.className = "text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-bold border border-slate-300";
+        pillElem.textContent = "Đã nguội";
+      }
+
+      renderThermalChartData(calcTempAtSeconds, finalSeconds, finalTemp);
+    }
+
+    function renderThermalChartData(calcTempFn, surveySeconds, surveyTemp) {
+      if (!thermalChart) return;
+      const maxDurationSec = Math.max(surveySeconds * 1.5, 600);
+      const steps = 30;
+      const dt = maxDurationSec / steps;
+      const labels = [];
+      const dataCurve = [];
+
+      for (let i = 0; i <= steps; i++) {
+        const sec = i * dt;
+        const minLabel = (sec / 60).toFixed(1);
+        labels.push(minLabel);
+        dataCurve.push(calcTempFn(sec));
+      }
+
+      const surveyMin = (surveySeconds / 60).toFixed(1);
+      const surveyPointData = labels.map(l => (Math.abs(parseFloat(l) - parseFloat(surveyMin)) < (dt / 60) ? surveyTemp : null));
+
+      thermalChart.data.labels = labels;
+      thermalChart.data.datasets[0].data = dataCurve;
+      thermalChart.data.datasets[1].data = surveyPointData;
+      thermalChart.update();
+    }
+
+
+    
     function toggleDrawer(open) {
       const container = document.getElementById('drawer-container');
       const backdrop = document.getElementById('drawer-backdrop');
@@ -1147,8 +1795,10 @@
         runTradeoffEvaluation();
       } else if (toolId === 'tool-view-single-calc') {
         runSingleCalculation();
+      } else if (toolId === 'tool-view-thermal-sim') {
+        runThermalSimulation();
       }
-
+    
       // Re-render drawer list to reflect active state
       renderDrawerTools(document.getElementById('tool-search-input').value);
       toggleDrawer(false);
@@ -1160,6 +1810,7 @@
       initTradeoffPickers();
       initSinglePickers();
       initSingleChart();
+      initThermalChart();
 
       // Render danh sách công cụ A-Z ban đầu
       renderDrawerTools();
